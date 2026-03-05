@@ -150,3 +150,65 @@ When combining OES PCA scores with discharge parameters (Config C), standardise 
 5. Report R², RMSE, MAE and produce predicted-vs-actual scatter plots.
 6. Produce PCA loading plots to identify which wavelengths matter most (physical interpretability).
 
+---
+
+# Phase 1: Observation
+
+## PCA Results
+
+PCA on the 701 OES features required **11 components** to reach the 95% cumulative variance threshold. The first 5 PCs capture ~74% of variance, with PC1 alone explaining 43%. This confirms that the spectral data has high redundancy — the effective dimensionality is far below 701, but not as low as initially hoped (3–8 components); 11 components are needed for 95%.
+
+## LOOCV Results Summary
+
+| Model | Config A (OES only) | Config B (Params only) | Config C (OES + Params) |
+|-------|:---:|:---:|:---:|
+| **Ridge** | R²= −0.31 | **R²= 0.90** | R²= −0.17 |
+| **PLS** | R²= −0.60 | **R²= 0.90** | R²= 0.63 |
+| **SVR** | R²= 0.05 | R²= 0.62 | R²= 0.09 |
+| **XGBoost** | R²= −0.11 | R²= −0.11 | R²= −0.11 |
+| **RF** | R²= 0.04 | R²= 0.38 | R²= 0.24 |
+| **MLP** | R²= −0.85 | R²= 0.57 | R²= −1.13 |
+| **CNN** | R²= 0.30 | N/A | **R²= 0.69** |
+
+## Key Observations
+
+### 1. Config B (discharge params only) dominates for most models
+
+The clearest and most surprising finding: **discharge parameters alone (Config B) outperform OES-based inputs** for 5 out of 6 applicable models. Ridge and PLS both achieve R² ≈ 0.90 with just 4 discharge parameters, while the same models score negative R² on OES-only input (Config A). This follows the pattern **B >> A**, which questions the standalone predictive value of OES in this small dataset.
+
+### 2. OES-only input (Config A) performs poorly across the board
+
+No model achieves R² > 0.31 on Config A. Most models produce negative R² (worse than predicting the mean), indicating that 11 PCA components from 20 samples cause severe overfitting. The curse of dimensionality is clearly evident — even after PCA, the OES representation has too many features relative to the sample size.
+
+### 3. CNN is the exception — OES adds value when learned end-to-end
+
+CNN Config C (OES + Params) achieves the **best OES-utilising performance** at R² = 0.69, and even CNN Config A (OES only) reaches R² = 0.30. This suggests that the CNN's convolutional layers learn a more effective spectral representation than PCA. The CNN bypasses PCA and learns its own feature extraction, which appears better suited for this data.
+
+### 4. PLS Config C shows OES can complement discharge parameters
+
+PLS with combined input (Config C, R² = 0.63) significantly outperforms PLS Config A (R² = −0.60), though it falls short of PLS Config B (R² = 0.90). This suggests PLS can extract some useful OES information when combined with discharge parameters, but the OES signal is not strong enough to improve upon discharge-only prediction for linear models.
+
+### 5. Tree-based models struggle with this dataset
+
+XGBoost produces identical R² = −0.11 across all three configs, suggesting it collapses to a trivial prediction regardless of input. RF performs modestly (best R² = 0.38 on Config B) but lags behind linear models. With only 20 samples, tree-based ensemble methods cannot build meaningful splits.
+
+### 6. Neural networks overfit severely on OES input
+
+MLP achieves R² = −0.85 (Config A) and R² = −1.13 (Config C), the worst results in the entire study. Even with dropout 0.4, weight decay, and early stopping, 20 samples are insufficient for MLP to generalise when OES features are present. Only Config B (4 features) yields a reasonable MLP result (R² = 0.57).
+
+## Interpretation for the Research Narrative
+
+The Phase 1 results suggest the relationship **B ≈ C >> A** for most models — discharge parameters are the dominant predictor and OES adds limited value in this 20-sample regime. However, this does **not** necessarily mean OES is uninformative. The more likely explanation is:
+
+1. **Sample size is too small** for high-dimensional OES to show its value. PCA retains 11 components for 20 samples (p/n ratio ~0.55), leaving little room for generalisation.
+2. **The 4 discharge parameters are highly structured** (each experimental group varies exactly one parameter), making prediction straightforward for regularised linear models.
+3. **CNN's relative success with OES** hints that with more data or better spectral feature extraction, OES could become a useful predictor.
+
+## Recommendations for Phase 2
+
+1. **Prioritise expanding the dataset** — the current 20 samples fundamentally limit what can be learned from high-dimensional OES data.
+2. **Investigate domain-specific OES feature engineering** — instead of blind PCA, select known diagnostic wavelengths (OH 308 nm, O 777 nm, H-alpha 656 nm) to create a small, physically meaningful feature set that may perform better with limited data.
+3. **Focus on Ridge/PLS as baselines** — they are the best-performing models and most stable; use them as the benchmark for any improved approach.
+4. **Explore CNN architecture further** — it is the only model that successfully extracts useful information from raw OES spectra; consider if a deeper or different architecture could improve further.
+5. **Consider whether real-time OES monitoring adds value beyond discharge settings** — if the goal is real-time H₂O₂ prediction, and discharge parameters alone achieve R² = 0.90, the practical question becomes whether OES monitoring is justified by marginal improvement or whether it offers value in detecting anomalies/drift that discharge settings alone cannot capture.
+
