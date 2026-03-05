@@ -37,6 +37,13 @@ XGBOOST_PARAMS = {
     "colsample_bytree": 0.8,
 }
 
+RF_PARAMS = {
+    "n_estimators": 100,
+    "max_depth": 3,
+    "min_samples_split": 5,
+    "min_samples_leaf": 2,
+}
+
 MLP_CONFIG = {
     "hidden_sizes": [32, 16],
     "dropout": 0.4,

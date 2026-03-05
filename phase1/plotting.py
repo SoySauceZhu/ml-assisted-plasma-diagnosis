@@ -72,7 +72,7 @@ def plot_all_predicted_vs_actual(all_results, save_dir=None):
 
 def plot_summary_heatmap(results_df, metric, save_path=None):
     pivot = results_df.pivot(index="Model", columns="Config", values=metric)
-    model_order = ["Ridge", "PLS", "SVR", "XGBoost", "MLP", "CNN"]
+    model_order = ["Ridge", "PLS", "SVR", "XGBoost", "RF", "MLP", "CNN"]
     pivot = pivot.reindex([m for m in model_order if m in pivot.index])
 
     fig, ax = plt.subplots(figsize=(6, 5))
@@ -87,7 +87,7 @@ def plot_summary_heatmap(results_df, metric, save_path=None):
 
 def plot_model_comparison_bar(results_df, save_path=None):
     fig, ax = plt.subplots(figsize=(10, 5))
-    model_order = ["Ridge", "PLS", "SVR", "XGBoost", "MLP", "CNN"]
+    model_order = ["Ridge", "PLS", "SVR", "XGBoost", "RF", "MLP", "CNN"]
     df = results_df.copy()
     df["Model"] = pd.Categorical(df["Model"], categories=model_order, ordered=True)
     df = df.sort_values("Model")

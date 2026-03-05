@@ -12,6 +12,7 @@ from .models.svr import SVRModel
 from .models.xgboost_model import XGBoostModel
 from .models.mlp import MLPModel
 from .models.cnn import CNNModel
+from .models.rf import RFModel
 
 
 def compute_metrics(y_true, y_pred):
@@ -117,13 +118,14 @@ def _create_model(model_name):
         "XGBoost": XGBoostModel,
         "MLP": MLPModel,
         "CNN": CNNModel,
+        "RF": RFModel,
     }
     return factories[model_name]()
 
 
 def run_all_evaluations(data, pca_k):
     """Run all model x config combinations. Returns (list of result dicts, summary DataFrame)."""
-    model_names = ["Ridge", "PLS", "SVR", "XGBoost", "MLP", "CNN"]
+    model_names = ["Ridge", "PLS", "SVR", "XGBoost", "RF", "MLP", "CNN"]
     config_names = ["A", "B", "C"]
     all_results = []
 
