@@ -11,6 +11,7 @@ I'm conducting a research that use machine learning method to build a pipepline 
 ## Phase 1 Goal
 
 - Suggest the pipeline that input OES and other useful parameters, and output the H2O2 yield.
+- Since the dimension is extremely high, so you need consider PCA anaylisys firstly.
 - Suggest machine learning models suitable for the prediction task. maybe XGBoost, CNN, MLP?
 - Suggest should I compare building the ML model with (Only OES spectrum vs. OES + discharge parameters setting)
 - Generate you response and append to the following section "#Phase1: action"
@@ -21,123 +22,131 @@ I'm conducting a research that use machine learning method to build a pipepline 
 
 ## Dataset Summary
 
-- **Samples:** 20 (4 experimental groups x 5 conditions)
-- **OES features:** 701 (`I_200` to `I_900`, 1 nm resolution)
-- **Discharge parameters:** 4 (`frequency_hz`, `pulse_width_ns`, `rise_time_ns`, `flow_rate_sccm`)
-- **Target:** `h2o2_rate` (continuous, range 0.02 – 0.83)
-- **Critical constraint:** n=20 with 701+ features — extreme high-dimension-low-sample-size (HDLSS) problem. This shapes every decision below.
+| Property | Value |
+|---|---|
+| Total samples | 20 |
+| OES features (I_200 – I_900) | 701 wavelength intensities at 1 nm resolution |
+| Discharge parameters | 4: `frequency_hz`, `pulse_width_ns`, `rise_time_ns`, `flow_rate_sccm` |
+| Target variable | `h2o2_rate` (range: 0.02 – 0.83) |
+| Experimental groups | 4 groups × 5 levels each (rise time, pulse width, frequency, flow rate) |
+
+**Critical constraint:** 20 samples with 701+ features is an extreme case of the "curse of dimensionality." This fundamentally shapes every modelling decision below.
 
 ---
 
-## 1. Suggested Pipeline
+## 1. Proposed Pipeline
 
 ```
-Raw CSV
-  |
-  +-- [A] Discharge parameters (4 features)
-  |        |
-  |        +-- StandardScaler
-  |
-  +-- [B] OES spectra (701 features)
-           |
-           +-- Preprocessing
-           |     - Normalize (SNV or Min-Max per sample)
-           |     - Optional: Savitzky-Golay smoothing (denoise)
-           |
-           +-- Dimensionality reduction  <-- ESSENTIAL with n=20
-                 - Option 1: PCA (retain 95% variance, likely ~5-10 components)
-                 - Option 2: Select known emission peaks
-                              (OH 309nm, N2 337nm, H-alpha 656nm, O 777nm, etc.)
-                 - Option 3: PLS components (built into PLS model)
-                 |
-                 +-- Reduced OES features (~5-15 dimensions)
-                           |
-  +---------------------------+
-  |
-  v
-Merge [A] + reduced [B]  (or [B] alone for OES-only experiment)
-  |
-  v
-Model --> Predicted h2o2_rate
-  |
-  v
-Evaluation (LOOCV / Repeated k-fold)
+Raw OES spectrum (701 dims)
+        │
+        ▼
+┌─────────────────────┐
+│  Preprocessing      │
+│  - Baseline corr.   │
+│  - Normalisation    │
+│  - Outlier check    │
+└────────┬────────────┘
+         │
+         ▼
+┌─────────────────────┐
+│  Dimensionality     │
+│  Reduction (PCA)    │
+│  701 → k components │
+└────────┬────────────┘
+         │
+         ├──── Path A: PCA scores only
+         │
+         ├──── Path B: PCA scores + discharge params
+         │          (frequency, pulse_width, rise_time, flow_rate)
+         ▼
+┌─────────────────────┐
+│  ML Model           │
+│  (see §3 below)     │
+└────────┬────────────┘
+         │
+         ▼
+   H₂O₂ yield rate
 ```
 
-**Preprocessing notes:**
-- StandardScaler on discharge params because they have different units/scales (Hz vs ns vs sccm)
-- SNV or area-normalize OES to remove intensity variations unrelated to chemistry
-- PCA or peak selection to reduce 701 dims to ~5-15; prevents overfitting and multicollinearity
+### Preprocessing steps
+1. **Baseline correction** – subtract or divide by a baseline (e.g., the `0 ns` pulse-width condition which yields nearly zero H₂O₂, rate = 0.02) to remove background/instrument drift.
+2. **Normalisation** – StandardScaler or Min-Max on OES intensities so large-magnitude peaks do not dominate PCA.
+3. **Outlier / sanity check** – inspect for any spectra with anomalous spikes (the raw data already shows some very large values, e.g., ~11 000 around I_308, I_777; these are likely real emission lines such as OH 308 nm and O 777 nm, but should be verified).
 
 ---
 
-## 2. Recommended Models
+## 2. PCA Analysis Plan
 
-### Tier 1 — Best fit for n=20 spectral regression
+Given n = 20 and p = 701, PCA is not just recommended — it is **mandatory**. Without it, any model will overfit immediately.
 
-| Model | Why suitable | Key hyperparameters |
-|---|---|---|
-| **PLS Regression** | Purpose-built for spectral data with few samples; handles multicollinearity natively; combines dim-reduction + regression | `n_components` |
-| **Ridge Regression** | Strong L2 regularization prevents overfitting in HDLSS; simple, interpretable | `alpha` |
-| **ElasticNet** | L1+L2 mix; can zero out irrelevant wavelengths (built-in feature selection) | `alpha`, `l1_ratio` |
-| **SVR (RBF kernel)** | Kernel trick captures non-linearity without needing many samples | `C`, `epsilon`, `gamma` |
+### PCA strategy
+- Fit PCA on the 701 OES columns.
+- Select k components via **cumulative explained variance** (target ≥ 90–95%).
+- With 20 samples, the maximum possible non-trivial components is 19 (= n − 1). In practice, the effective rank of the spectral matrix is likely much lower (often 3–8 components capture >95% of OES variance), because:
+  - Emission lines are correlated (e.g., OH A-X band around 306–310 nm dominates).
+  - Continuum background shifts uniformly across many wavelengths.
+- Also produce a **scree plot** and **loading plots** to interpret which spectral regions drive each PC.
 
-### Tier 2 — Usable with care
-
-| Model | Caveats |
-|---|---|
-| **XGBoost / Random Forest** | Must heavily constrain: `max_depth<=3`, few estimators, high regularization. Apply **after** PCA. |
-| **Simple MLP** | Only 1 hidden layer (8-16 neurons), strong dropout (0.3-0.5), weight decay, early stopping. Very prone to overfitting at n=20. |
-
-### Tier 3 — NOT recommended for n=20
-
-| Model | Why not |
-|---|---|
-| **CNN (1D-Conv)** | Needs hundreds-thousands of samples to learn spectral filters. Will memorize with n=20. |
-| **Deep MLP (>2 layers)** | Parameter count dwarfs sample count. |
-
-**Bottom line:** Start with **PLS Regression** as baseline (gold standard in chemometrics), compare against **Ridge, ElasticNet, SVR**, and **XGBoost (post-PCA)** as a non-linear benchmark. Skip CNN/deep networks unless dataset grows to 100+ samples.
+### Additional consideration: alternative to PCA
+- **Feature selection by domain knowledge**: instead of blind PCA, manually select known diagnostic wavelengths (OH 308 nm, O 777 nm, Hα 656 nm, N₂ 337 nm, etc.) and use their intensities directly. This gives physically interpretable features and dramatically reduces dimensionality. Can be compared with PCA approach.
 
 ---
 
-## 3. OES-only vs. OES + Discharge Parameters: Yes, compare them
+## 3. Recommended ML Models
 
-This is a standard and valuable ablation study. Run three experiments:
+Given the constraint of **n = 20 samples**, model choice must prioritise low complexity and resistance to overfitting. Here is a ranked recommendation:
 
-| Experiment | Inputs | What it tests |
-|---|---|---|
-| **A: OES only** | Reduced OES (PCA or selected peaks) | Can the spectrum alone predict H2O2 yield? |
-| **B: OES + discharge params** | Reduced OES + 4 discharge settings | Do discharge settings add predictive power beyond what OES already captures? |
-| **C: Discharge params only** | 4 discharge parameters | Naive baseline — how far can you get without any spectral data? |
+| Rank | Model | Why suitable | Why risky | Recommendation |
+|------|-------|-------------|-----------|----------------|
+| 1 | **Ridge / Lasso Regression** | Built-in regularisation; works well with small n; interpretable coefficients; fast | Linear assumption may miss non-linear relationships | **Use as baseline** |
+| 2 | **Partial Least Squares (PLS) Regression** | Specifically designed for high-dim, low-sample spectral data; simultaneously reduces dimensions and fits regression | Less flexible than tree-based | **Strongly recommended** — this is the standard in chemometrics/spectroscopy |
+| 3 | **Support Vector Regression (SVR)** | Kernel trick handles non-linearity; effective in high-dim spaces; regularised | Hyperparameter tuning (C, ε, kernel) needs careful CV | **Recommended** |
+| 4 | **XGBoost** | Handles non-linearity; feature importance built-in | Prone to overfit with n = 20; needs aggressive regularisation (max_depth ≤ 3, high reg_alpha/lambda, few estimators) | **Use with caution** — apply strong regularisation |
+| 5 | **MLP (small)** | Can capture non-linear patterns | Very prone to overfit with 20 samples; many hyperparameters | **Include for comparison** — use small architecture (e.g., 1–2 hidden layers, ≤32 neurons), strong dropout (0.3–0.5), early stopping, and weight decay |
+| 6 | **CNN (1D)** | Can learn local spectral features (peak shapes, band structures) automatically; weight sharing reduces parameters vs. MLP | Requires more data than classical methods; will likely overfit | **Include for comparison** — use shallow architecture (1–2 conv layers, small filters), global average pooling, dropout, and early stopping |
 
-**Why this matters:**
-- If A approx B: OES already encodes discharge effects → supports "OES alone is sufficient for real-time monitoring" (stronger practical claim)
-- If B >> A: Combined model needed, but both inputs are available in practice
-- Experiment C provides the naive baseline that reviewers will expect
-- This ablation directly answers a core research question and strengthens the paper
-
----
-
-## 4. Evaluation Strategy
-
-With n=20, evaluation must be handled carefully:
-
-- **Leave-One-Out Cross-Validation (LOOCV):** train on 19, predict 1, repeat 20 times. Best option at this sample size.
-- **Alternative:** Repeated 5-fold CV (10 repeats) for confidence intervals.
-- **Metrics:** R-squared, RMSE, MAE on held-out samples.
-- **Do NOT** use a single train/test split — variance would be too high.
+### Evaluation strategy
+- **Leave-One-Out Cross-Validation (LOOCV)** — the only reliable CV strategy with n = 20.
+- Metrics: **R²**, **RMSE**, **MAE**.
+- Also report train vs. test error to detect overfitting.
 
 ---
 
-## 5. Action Plan Summary
+## 4. Comparison Study: OES-only vs. OES + Discharge Parameters
 
-| Step | Action |
-|---|---|
-| 1 | Load and explore data; check for missing values, outliers in spectra |
-| 2 | Preprocess OES (normalize, optional smoothing) and scale discharge params |
-| 3 | Reduce OES dimensionality (PCA to ~5-10 components) |
-| 4 | Train and evaluate via LOOCV: **PLS, Ridge, ElasticNet, SVR, XGBoost** |
-| 5 | For each model, run three input experiments: **(A) OES-only, (B) OES+params, (C) params-only** |
-| 6 | Compare results (R-squared, RMSE) across models and input configs |
-| 7 | Identify best model + best input configuration |
-| 8 | Analyze feature importance / PLS loadings to interpret which wavelengths matter most |
+**Yes, you should compare both approaches.** This is a valuable and publishable comparison. Here is the rationale:
+
+### Experimental design: 3 input configurations
+
+| Config | Input features | Rationale |
+|--------|---------------|-----------|
+| **A** | OES PCA scores only | Tests whether the spectrum alone is a sufficient predictor (i.e., does OES encode all the discharge physics?) |
+| **B** | Discharge parameters only (4 features) | Baseline — can we predict H₂O₂ from settings alone without measuring OES? |
+| **C** | OES PCA scores + discharge parameters | Tests whether discharge settings provide complementary information beyond what OES captures |
+
+### Why this comparison matters
+- If **A ≈ C >> B**: OES is the dominant predictor; discharge params add no value → supports the claim that real-time OES monitoring is sufficient for prediction.
+- If **C >> A > B**: Both contribute → the combined model is best for deployment, but OES provides the core signal.
+- If **B ≈ C >> A**: Discharge settings alone are sufficient → questions the need for OES in the pipeline.
+- The result strengthens the research narrative regardless of outcome.
+
+### Practical note
+When combining OES PCA scores with discharge parameters (Config C), standardise all features to the same scale before feeding them into the model, since PCA scores and physical parameters (Hz, nm, sccm) have very different magnitudes.
+
+---
+
+## 5. Summary of Recommended Actions for Phase 2 (Implementation)
+
+1. Load and preprocess the OES data (baseline correction, normalisation).
+2. Perform PCA on the 701 OES features; determine optimal k via scree plot / cumulative variance.
+3. Build and evaluate the following models under LOOCV:
+   - **PLS Regression** (primary model)
+   - **Ridge Regression** (linear baseline)
+   - **SVR with RBF kernel** (non-linear option)
+   - **XGBoost** (with aggressive regularisation, as a comparison)
+   - **MLP** (small architecture: 1–2 hidden layers ≤32 neurons, dropout 0.3–0.5, weight decay, early stopping)
+   - **1D-CNN** (shallow: 1–2 conv layers, global average pooling, dropout, early stopping; takes raw OES spectrum as input — PCA not applied for CNN, as conv layers learn their own feature extraction)
+4. For each model, compare three input configs: (A) OES-only, (B) Params-only, (C) OES + Params.
+5. Report R², RMSE, MAE and produce predicted-vs-actual scatter plots.
+6. Produce PCA loading plots to identify which wavelengths matter most (physical interpretability).
+
