@@ -1,4 +1,39 @@
 {
+  "MLP_A": {
+    "hidden_sizes": [
+      32,
+      16
+    ],
+    "dropout": 0.37365894414136996,
+    "weight_decay": 0.068573775165853,
+    "lr": 0.004981384897431641,
+    "max_epochs": 500,
+    "patience": 30,
+    "batch_norm": true
+  },
+  "MLP_B": {
+    "hidden_sizes": [
+      16
+    ],
+    "dropout": 0.4233019610506231,
+    "weight_decay": 0.00701418281132535,
+    "lr": 0.004244678509601984,
+    "max_epochs": 1000,
+    "patience": 100,
+    "batch_norm": true
+  },
+  "MLP_C": {
+    "hidden_sizes": [
+      32,
+      16
+    ],
+    "dropout": 0.4717685061257496,
+    "weight_decay": 0.002935930223532139,
+    "lr": 0.003755225088588337,
+    "max_epochs": 1000,
+    "patience": 50,
+    "batch_norm": true
+  },
   "CNN_A": {
     "conv_channels": [
       8,
