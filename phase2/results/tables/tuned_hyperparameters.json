@@ -1,0 +1,26 @@
+{
+  "RF_A": {
+    "n_estimators": 500,
+    "max_depth": null,
+    "min_samples_split": 4,
+    "min_samples_leaf": 2,
+    "max_features": "log2",
+    "bootstrap": false
+  },
+  "RF_B": {
+    "n_estimators": 50,
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": 0.5,
+    "bootstrap": false
+  },
+  "RF_C": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
+    "bootstrap": false
+  }
+}
