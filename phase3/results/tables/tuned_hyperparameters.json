@@ -1,0 +1,59 @@
+{
+  "RF_A": {
+    "n_estimators": 200,
+    "max_depth": 4,
+    "min_samples_split": 4,
+    "min_samples_leaf": 2,
+    "max_features": "sqrt",
+    "bootstrap": false
+  },
+  "RF_B": {
+    "n_estimators": 200,
+    "max_depth": null,
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": 0.5,
+    "bootstrap": false
+  },
+  "RF_C": {
+    "n_estimators": 100,
+    "max_depth": null,
+    "min_samples_split": 3,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
+    "bootstrap": false
+  },
+  "MLP_A": {
+    "hidden_sizes": [
+      32
+    ],
+    "dropout": 0.5599104862066939,
+    "weight_decay": 0.06398483299531728,
+    "lr": 0.002019275281780115,
+    "max_epochs": 300,
+    "patience": 50,
+    "batch_norm": false
+  },
+  "MLP_B": {
+    "hidden_sizes": [
+      16
+    ],
+    "dropout": 0.4144896508195632,
+    "weight_decay": 0.004034749069814425,
+    "lr": 0.00467537591295772,
+    "max_epochs": 1000,
+    "patience": 100,
+    "batch_norm": true
+  },
+  "MLP_C": {
+    "hidden_sizes": [
+      32
+    ],
+    "dropout": 0.3721023838971268,
+    "weight_decay": 0.008836956620627168,
+    "lr": 0.001906575721521555,
+    "max_epochs": 1000,
+    "patience": 100,
+    "batch_norm": false
+  }
+}
