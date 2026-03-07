@@ -1,26 +1,30 @@
 {
-  "RF_A": {
-    "n_estimators": 500,
-    "max_depth": null,
-    "min_samples_split": 4,
-    "min_samples_leaf": 2,
-    "max_features": "log2",
-    "bootstrap": false
+  "CNN_A": {
+    "conv_channels": [
+      8,
+      16
+    ],
+    "kernel_size": 15,
+    "dropout": 0.3356133549804503,
+    "weight_decay": 0.002980903552486286,
+    "lr": 0.0009080067923714868,
+    "max_epochs": 500,
+    "patience": 100,
+    "pool_type": "max",
+    "fc_hidden": 8
   },
-  "RF_B": {
-    "n_estimators": 50,
-    "max_depth": null,
-    "min_samples_split": 2,
-    "min_samples_leaf": 1,
-    "max_features": 0.5,
-    "bootstrap": false
-  },
-  "RF_C": {
-    "n_estimators": 100,
-    "max_depth": null,
-    "min_samples_split": 2,
-    "min_samples_leaf": 1,
-    "max_features": "sqrt",
-    "bootstrap": false
+  "CNN_C": {
+    "conv_channels": [
+      32,
+      64
+    ],
+    "kernel_size": 5,
+    "dropout": 0.42274686073563,
+    "weight_decay": 0.0010014424153363328,
+    "lr": 0.00036915371339454634,
+    "max_epochs": 500,
+    "patience": 100,
+    "pool_type": "avg",
+    "fc_hidden": null
   }
 }
