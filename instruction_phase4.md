@@ -732,7 +732,7 @@ The Ridge result directly explains why Config B (R² = 0.90) outperforms Config 
 
 ### 3. Ridge and MLP Config C are statistically indistinguishable
 
-The 95% bootstrap CIs for Ridge Config C [0.574, 0.910] and MLP Config C [0.647, 0.883] overlap extensively. The point estimates (R² = 0.798 vs. 0.815) differ by only 0.017, which is well within the uncertainty. This confirms that **the feature–target relationships in Config C are predominantly linear** — the MLP's non-linear capacity provides no statistically significant advantage over Ridge. The practical implication is that Ridge should be preferred for Config C deployment due to its simplicity, interpretability, and deterministic behaviour.
+The 95% bootstrap CIs for Ridge Config C [0.574, 0.910] and MLP Config C [0.647, 0.883] overlap extensively. The point estimates (R² = 0.798 vs. 0.815) differ by only 0.017, which is well within the uncertainty. This confirms that **the feature–target relationships in Config C are predominantly linear** — the MLP's non-linear capacity provides no statistically significant advantage over Ridge. The practical implication is that Ridge should be preferred for Config C deployment due to its simplicity, interpretability, and deterministic behaviour. But ANN like MLP also shows good representative ability.
 
 ### 4. Spearman rank correlations reveal two distinct model "families"
 
@@ -869,3 +869,157 @@ Phase 4 identified Sample 9 (2000 ns pulse width) as a persistent outlier. Inves
 - The prediction error at extreme conditions follows a systematic pattern (extrapolation beyond training distribution).
 - A piecewise or condition-specific model (e.g., separate models for low vs. high pulse width) could capture the non-linearity at the boundary.
 - The optimal feature subset changes when the outlier is excluded, to assess whether the ablation results are robust to influential points.
+
+---
+
+# Supplementary: Action
+
+## Context
+
+Phase 4 ran a backward elimination ablation study and category ablation (Ridge Config C, LOOCV) that produced a key finding: pruning from 13 → 4 OES features improves R² from 0.798 → 0.899, and category-only subsets (3 ratios or 3 band integrals + 4 discharge) reach R² ≈ 0.906. This section specifies the additional evaluation and visualisation work needed to make these ablation results publication-ready.
+
+The existing data files are:
+- `phase4/results/tables/ablation_results.csv` — backward elimination step-by-step records (columns: `n_oes_features`, `removed_feature`, `remaining_features`, `R2`, `RMSE`, `MAE`, `type`, `n_total_features`)
+- `phase4/results/tables/feature_correlation_vif.csv` — VIF values for 13 OES features
+- Category ablation results are currently only in the instruction document (not saved as a standalone CSV)
+
+## Action 1: Figure — Backward Elimination Trajectory (fig9)
+
+**Purpose:** The central ablation figure for the paper. Shows that performance *improves* as features are removed, with a clear peak.
+
+**Script:** `phase4/feature_redundancy_eval.py` (new file)
+
+**What to plot:**
+- X-axis: number of OES features remaining (13 → 3), right-to-left or left-to-right (choose left-to-right: 3 → 13 so the "pruned" end is on the left)
+- Y-axis: LOOCV R² (Ridge Config C)
+- Primary line: R² at each backward elimination step, with markers at each point
+- Annotate the peak point (n_oes=4, R²=0.899) with a star marker and text label
+- Draw a horizontal dashed reference line at R²=0.798 (full 13-feature baseline) labelled "All 13 OES"
+- Draw a second horizontal dashed line at R²=0.904 (Config B Ridge) labelled "Config B (discharge only)"
+- Shade the region where the pruned model (≤4 OES features) outperforms the full model
+- Color the peak point differently (e.g., gold)
+
+**Output:**
+- `phase4/results/figures/fig9_ablation_trajectory.pdf` (and `.png` for quick viewing)
+
+---
+
+## Action 2: Figure — Category Ablation Bar Chart (fig10)
+
+**Purpose:** Compares performance of OES feature categories. Visual proof that ratios and band integrals are more efficient than single-wavelength features.
+
+**What to plot:**
+- Horizontal grouped bar chart (or vertical bars)
+- Categories (x): "All 13 OES\n(+4 discharge)", "Single-wavelength\n(7 OES+4)", "Band integrals\n(3 OES+4)", "Ratios\n(3 OES+4)"
+- Metric (y): LOOCV R²
+- Annotate each bar with its R² value and number of features used (e.g., "n=17", "n=11", "n=7", "n=7")
+- Colour bars by category type (one colour per: all, single, band, ratio)
+- Add horizontal reference line at R²=0.904 (Config B, discharge only)
+
+**Data source:** Category ablation values are hardcoded from the instruction document:
+
+| Category | n_oes | n_total | R² | RMSE |
+|---|---|---|---|---|
+| All 13 OES | 13 | 17 | 0.798 | 0.104 |
+| Single-wavelength only | 7 | 11 | 0.823 | — |
+| Band integrals only | 3 | 7 | 0.905 | — |
+| Ratios only | 3 | 7 | 0.906 | — |
+
+**First**, re-run category ablation programmatically to capture RMSE and MAE for all four categories (to fill in the blanks above).
+
+**Save table:** `phase4/results/tables/category_ablation_results.csv` (columns: `category`, `oes_features`, `n_oes`, `n_total`, `R2`, `RMSE`, `MAE`)
+
+**Output:**
+- `phase4/results/figures/fig10_category_ablation.pdf` (and `.png`)
+
+---
+
+## Action 3: Figure — VIF Bar Chart (fig11)
+
+**Purpose:** Visualise the multicollinearity problem among 13 OES features. Justify why pruning is necessary.
+
+**What to plot:**
+- Horizontal bar chart, features sorted by VIF descending
+- X-axis: VIF value (log scale recommended given the range 2.4–381.7)
+- Colour bars: red if VIF > 10 (high multicollinearity), green if VIF ≤ 10
+- Add vertical dashed line at VIF = 10 (conventional threshold)
+- Annotate the two extreme bars (I_309_OH, band_OH_306_312) with their VIF values
+- Mark with a different symbol which features survive into the optimal 4-feature subset
+
+**Data source:** `phase4/results/tables/feature_correlation_vif.csv`
+
+**Output:**
+- `phase4/results/figures/fig11_vif_barchart.pdf` (and `.png`)
+
+---
+
+## Action 4: MLP Backward Elimination Cross-Validation
+
+**Purpose:** Verify that the optimal OES subset found by Ridge ablation is not Ridge-specific. If MLP ablation also peaks near 4 OES features (and ideally at the same features), the finding is model-agnostic and much stronger for the paper.
+
+**What to do:**
+- Repeat the backward elimination procedure from Phase 4's Step 7, but use MLP (with the Phase 3 tuned hyperparameters, fixed random seed) instead of Ridge
+- At each step, compute LOOCV R² for MLP Config C with the current feature subset
+- Use the same greedy removal criterion: remove the feature with the lowest SHAP mean |value| from the previous fold (or permutation importance if SHAP is too slow per fold)
+- Record: `n_oes_features`, `removed_feature`, `remaining_features`, `R2_mlp`, `RMSE_mlp`, `MAE_mlp`
+
+**Save table:** `phase4/results/tables/ablation_results_mlp.csv` (same schema as `ablation_results.csv` with `type=backward_elimination_mlp`)
+
+**Add to fig9:** Overlay MLP trajectory as a second line (dashed) on the same plot, to directly compare Ridge vs. MLP ablation curves. Update the figure and re-save.
+
+---
+
+## Action 5: Permutation Test on Pruned Ridge (Statistical Significance)
+
+**Purpose:** Confirm the pruned model's R² = 0.906 is statistically significant given n=20.
+
+**What to do:**
+- Take the optimal pruned feature set: 3 ratios (`ratio_309_656`, `ratio_777_309`, `ratio_656_486`) + 4 discharge parameters = 7 features
+- Fit Ridge (with Phase 3 tuned alpha) using LOOCV on the real target → record observed R² = 0.906
+- Permutation test: shuffle y labels 2000 times, refit Ridge LOOCV each time, record null R²
+- Compute p-value = fraction of null R² ≥ observed R²
+- Plot null distribution as histogram with observed R² marked as vertical line
+
+**Save table:** `phase4/results/tables/permutation_test_pruned_ridge.csv` (columns: `null_r2` for each permutation, plus a row with `observed_r2` and `p_value`)
+
+**Output:**
+- `phase4/results/figures/fig12_permutation_test.pdf` (and `.png`)
+
+---
+
+## Action 6: Comprehensive Ablation Summary Table (article-ready)
+
+**Purpose:** A single clean table combining backward elimination and category ablation for direct use in the Methods/Results section of the paper.
+
+**Produce:** `phase4/results/tables/ablation_summary_article.csv`
+
+Columns: `step`, `type` (backward_elimination / category), `n_oes_features`, `n_total_features`, `oes_features_kept`, `R2_ridge`, `RMSE_ridge`, `R2_mlp` (from Action 4), `RMSE_mlp`, `note`
+
+Include:
+- All 11 backward elimination steps (13 → 3 OES features) for Ridge
+- Corresponding MLP R² at the same feature subsets (from Action 4)
+- All 4 category ablation rows
+- A final "Config B (discharge only)" reference row for comparison
+
+---
+
+## Output File Summary
+
+| File | Type | Purpose |
+|------|------|---------|
+| `figures/fig9_ablation_trajectory.pdf/.png` | Figure | Backward elimination R² curve (Ridge + MLP overlay) |
+| `figures/fig10_category_ablation.pdf/.png` | Figure | Category comparison bar chart |
+| `figures/fig11_vif_barchart.pdf/.png` | Figure | VIF multicollinearity visualisation |
+| `figures/fig12_permutation_test.pdf/.png` | Figure | Statistical significance of pruned model |
+| `tables/category_ablation_results.csv` | Table | Category ablation with RMSE/MAE |
+| `tables/ablation_results_mlp.csv` | Table | MLP backward elimination trajectory |
+| `tables/permutation_test_pruned_ridge.csv` | Table | Permutation null distribution + p-value |
+| `tables/ablation_summary_article.csv` | Table | Combined ablation table for paper |
+
+## Implementation Notes
+
+- All scripts go in `phase4/` (alongside existing `feature_redundancy.py`)
+- Reuse `get_input_config()`, `load_data()`, and LOOCV utilities from existing phase4 scripts
+- Fix all random seeds (`np.random.seed(42)`, `torch.manual_seed(42)`) for reproducibility
+- Use `matplotlib` with `tight_layout()` and save at 300 dpi for both `.pdf` and `.png`
+- Feature name ordering in Config C must match `ALL_FEATURE_NAMES_C` exactly (13 OES then 4 discharge)
