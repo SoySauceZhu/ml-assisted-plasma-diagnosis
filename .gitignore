@@ -1,0 +1,14 @@
+# LaTeX compile outputs
+presentation poster/document.aux
+presentation poster/document.bbl
+presentation poster/document.bcf
+presentation poster/document.blg
+presentation poster/document.fdb_latexmk
+presentation poster/document.fls
+presentation poster/document.log
+presentation poster/document.nav
+presentation poster/document.out
+presentation poster/document.run.xml
+presentation poster/document.snm
+presentation poster/document.synctex.gz
+presentation poster/document.toc
