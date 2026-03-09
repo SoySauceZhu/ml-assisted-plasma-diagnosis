@@ -57,9 +57,21 @@
     \begin{itemize}
         \item Nanosecond pulsed CO$_2$ discharge in water produces H$_2$O$_2$ --- a key oxidant for water treatment
         \item Optical Emission Spectroscopy (OES) captures real-time plasma spectra (200--900\,nm, 701 channels)
-        \item \textbf{Goal:} Predict H$_2$O$_2$ yield rate from OES data and discharge parameters using machine learning
+        \item \textbf{Goal:} Predict H$_2$O$_2$ yield rate from OES data and discharge parameters using machine learning 
+        \textcolor{red}{\&\& conduct analysis on features' contribution and model performance}
         \item \textbf{Challenge:} Only 20 experimental samples available (small-sample regime)
     \end{itemize}
+\end{frame}
+
+%% ---------------------------------------------------------------------------
+\begin{frame}{Project Phases}
+    The project is conducted in 4 iterative phases, each building on the previous one to enhance model performance and interpretability:
+    \begin{enumerate}
+        \item \textbf{Phase 1:} Baseline modeling with PCA-reduced OES features + discharge parameters
+        \item \textbf{Phase 2:} Hyperparameter tuning of nonlinear models (RF, MLP, CNN) using Bayesian optimization
+        \item \textbf{Phase 3:} Domain-knowledge-driven manual feature engineering (13 physics-based OES features)
+        \item \textbf{Phase 4:} Interpretability analysis and feature reduction via multi-model consensus and backward elimination
+    \end{enumerate}
 \end{frame}
 
 %% ---------------------------------------------------------------------------
@@ -114,11 +126,11 @@
 \begin{frame}{Phase 1: Results --- R$^2$ Heatmap (7 Models $\times$ 3 Configs)}
     \begin{figure}
         \centering
-        \includegraphics[width=0.75\textwidth]{image/heatmap_R2.png}
+        \includegraphics[width=0.5\textwidth]{image/heatmap_R2.png}
     \end{figure}
     \begin{itemize}
         \item \textbf{Best:} Ridge Config B achieved R$^2$ = 0.90 (discharge params only)
-        \item OES-based configs (A, C) performed poorly with blind PCA features
+        \item \textcolor{red}{Discharge-parameter-only models (config B) outperformed OES-only (config A) and combined (config C) models}
     \end{itemize}
 \end{frame}
 
@@ -126,6 +138,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Phase 2: Hyperparameter Tuning}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Phase 2: Motivation for Hyperparameter Tuning}
+    \begin{itemize}
+        \item Phase 1 used default hyperparameters, which may not suit our small-sample, high-dimensional data
+        \item Nonlinear models (RF, MLP, CNN) showed potential but **underperformed** due to either suboptimal settings or limited data
+        \item Bayesian optimization can efficiently explore the hyperparameter space to enhance model performance. Thus can potentially recover nonlinear models' performance and better leverage OES features, especially in Config C
+    \end{itemize}
+    
+\end{frame}
 
 %% ---------------------------------------------------------------------------
 \begin{frame}{Phase 2: Bayesian Optimization}
@@ -143,11 +163,11 @@
             \toprule
             \textbf{Model} & \textbf{Config} & \textbf{R$^2$ (P1)} & \textbf{R$^2$ (P2)} & \textbf{$\Delta$R$^2$} \\
             \midrule
-            MLP & C & $-1.13$ & 0.37 & $+1.50$ \\
+            MLP & \textcolor{red}{C} & $-1.13$ & 0.37 & \textcolor{red}{$+1.50$} \\
             MLP & A & $-0.85$ & 0.37 & $+1.22$ \\
             RF  & B & 0.38 & 0.75 & $+0.37$ \\
-            MLP & B & 0.57 & 0.86 & $+0.29$ \\
-            CNN & C & 0.69 & 0.77 & $+0.09$ \\
+            MLP & \textcolor{red}{B} & 0.57 & \textcolor{red}{0.86} & $+0.29$ \\
+            CNN & \textcolor{red}{C} & 0.69 & \textcolor{red}{0.77} & $+0.09$ \\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -157,11 +177,11 @@
 \begin{frame}{Phase 2: Results --- Phase 1 vs Phase 2 Comparison}
     \begin{figure}
         \centering
-        \includegraphics[width=0.85\textwidth]{image/phase1_vs_phase2_comparison.png}
+        \includegraphics[width=0.75\textwidth]{image/phase1_vs_phase2_comparison.png}
     \end{figure}
     \begin{itemize}
-        \item Tuning universally beneficial, but Config B still dominant
-        \item OES features via PCA remained weak even with optimized models
+        \item Tuning universally beneficial, improving the non-linear ML models (MLP, RF, CNN) across all configs
+        \item But Config B still dominant, and OES features via PCA remained weak even with optimized models
     \end{itemize}
 \end{frame}
 
@@ -169,6 +189,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Phase 3: Domain-Knowledge Feature Engineering}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Phase 3: Motivation for Domain-Knowledge Feature Engineering}
+    \begin{itemize}
+        \item PCA features are abstract, it only shows variance but lacks physical meaning, and may not capture the underlying plasma chemistry relevant to H$_2$O$_2$ production
+        \item Leveraging domain knowledge (plasma chemistry) to engineer specific OES features (e.g., intensities of key emission lines, band integrals, ratios) can create more meaningful inputs that directly relate to chemical processes
+        \item Hypothesis: Higher representative Physics-based features will enhance model interpretability and predictive power, especially in Config C where OES data is combined with discharge parameters
+    \end{itemize}
+    
+\end{frame}
 
 %% ---------------------------------------------------------------------------
 \begin{frame}{Phase 3: 13 Physics-Based OES Features}
@@ -201,15 +230,15 @@
 \end{frame}
 
 %% ---------------------------------------------------------------------------
-\begin{frame}{Phase 3: Results --- Cross-Phase Comparison}
+\begin{frame}{Phase 3: \textcolor{red}{Significant} Results --- Cross-Phase Comparison}
     \begin{figure}
         \centering
-        \includegraphics[width=0.85\textwidth]{image/phase1_vs_phase3_comparison.png}
+        \includegraphics[width=\textwidth]{image/phase1_vs_phase3_comparison.png}
     \end{figure}
     \begin{itemize}
         \item \textbf{Ridge Config C:} R$^2$ improved from $-0.17$ to $0.80$ ($+0.97$)
         \item \textbf{MLP Config C:} R$^2$ improved from $-1.13$ to $0.82$ ($+1.95$)
-        \item Domain knowledge dramatically unlocked OES predictive power
+        \item \textcolor{red}{Domain knowledge dramatically unlocked OES predictive power}
     \end{itemize}
 \end{frame}
 
@@ -217,16 +246,24 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Phase 4: Interpretability \& Feature Reduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Phase 4: Motivation for Interpretability and Feature Reduction}
+    \begin{itemize}
+        \item Phase 3's physics-based features improved performance but increased model complexity (17 features), risking overfitting in our small-sample regime
+        \item Understanding which features are most influential can enhance interpretability, avoid overfitting and probably improve generalization by removing redundant or noisy features (feature work)
+        \item Hypothesis: A smaller subset of the most important features (e.g., top 5-7) can achieve comparable or better performance than the full set by reducing collinearity and noise, while also providing clearer insights into the key plasma processes driving H$_2$O$_2$ production
+    \end{itemize}
+    
+\end{frame}
 
 %% ---------------------------------------------------------------------------
 \begin{frame}{Phase 4: Multi-Model Feature Importance Consensus}
     \begin{figure}
         \centering
-        \includegraphics[width=0.85\textwidth]{image/feature_importance_heatmap.pdf}
+        \includegraphics[width=\textwidth]{image/feature_importance_heatmap.pdf}
     \end{figure}
     \begin{itemize}
         \item Ranked 17 features across Ridge, PLS, RF, and MLP (SHAP)
-        \item \textbf{Top features:} flow rate, CO$_2^+$ band integral, pulse width
+        \item \textbf{Top/Significant features:} flow rate, CO$_2^+$ band integral, pulse width
     \end{itemize}
 \end{frame}
 
