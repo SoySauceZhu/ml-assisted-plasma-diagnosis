@@ -7,7 +7,8 @@
       "Bash(find:*)",
       "Bash(cp:*)",
       "Bash(xelatex:*)",
-      "Bash(biber document:*)"
+      "Bash(biber document:*)",
+      "Bash(python3:*)"
     ]
   }
 }

@@ -23,7 +23,7 @@
     \university{University of Liverpool}
 }
 % date of the presentation
-\date{March 9, 2026}
+\date{March 8, 2026}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,18 +267,18 @@
     \end{itemize}
 \end{frame}
 
-%% ---------------------------------------------------------------------------
-\begin{frame}{Phase 4: Backward Elimination --- Ablation Trajectory}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.75\textwidth]{image/ablation_trajectory.png}
-    \end{figure}
-    \begin{itemize}
-        \item Removing redundant OES features \textbf{improves} R$^2$ (collinearity reduction)
-        \item Optimal: \textbf{4 OES + 4 discharge params} $\rightarrow$ R$^2$ = 0.899
-        \item Category ablation: 3 ratios alone + 4 params $\rightarrow$ R$^2$ = 0.920
-    \end{itemize}
-\end{frame}
+% %% ---------------------------------------------------------------------------
+% \begin{frame}{Phase 4: Backward Elimination --- Ablation Trajectory}
+%     \begin{figure}
+%         \centering
+%         \includegraphics[width=0.75\textwidth]{image/ablation_trajectory.png}
+%     \end{figure}
+%     \begin{itemize}
+%         \item Removing redundant OES features \textbf{improves} R$^2$ (collinearity reduction)
+%         \item Optimal: \textbf{4 OES + 4 discharge params} $\rightarrow$ R$^2$ = 0.899
+%         \item Category ablation: 3 ratios alone + 4 params $\rightarrow$ R$^2$ = 0.920
+%     \end{itemize}
+% \end{frame}
 
 %% ---------------------------------------------------------------------------
 \begin{frame}{Phase 4: Statistical Validation}
@@ -312,6 +312,10 @@
             \end{itemize}
         \end{column}
     \end{columns}
+
+    \begin{itemize}
+        \item Ridge and MLP Config C are statistically indistinguishable
+    \end{itemize}
 \end{frame}
 
 %% ---------------------------------------------------------------------------
@@ -360,7 +364,19 @@
         \end{tabular}
     \end{table}
     \vspace{0.5em}
-    \textbf{Key takeaways:}
+
+\end{frame}
+
+%% ---------------------------------------------------------------------------
+\begin{frame}{Conclusion}
+    \textbf{Progress Summary}
+    \begin{itemize}
+        \item Successfully developed a machine learning model to predict H$_2$O$_2$ yield from OES and discharge parameters 
+        \item Demonstrated the critical importance of domain-knowledge-driven feature engineering in unlocking OES predictive power
+        \item Identified key features that drive model performance best, enhancing interpretability and reducing overfitting risk
+    \end{itemize}
+
+    \textbf{Findings}
     \begin{itemize}
         \item Domain knowledge + feature reduction outperformed complex models on small data
         \item OES features became useful only after physics-guided engineering (Phase 3)
@@ -369,19 +385,19 @@
 \end{frame}
 
 
-%% ---------------------------------------------------------------------------
-% Reference frames
-\begin{frame}[allowframebreaks]
-    \frametitle{Reference}
-        \tiny\printbibliography
-\end{frame}
+
+% %% ---------------------------------------------------------------------------
+% % Reference frames
+% \begin{frame}[allowframebreaks]
+%     \frametitle{Reference}
+%         \tiny\printbibliography
+% \end{frame}
 
 %% ---------------------------------------------------------------------------
 % Final frame
 \begin{frame}{}
     \centering
     \huge{\textbf{\example{Thank You !}}}
-
 
 \end{frame}
 
