@@ -79,3 +79,54 @@ A classical plasma diagnostic quantity. In an optically thin plasma under Case B
 | F11 | I(309)/I(656) | Ratio | OH / Hα | OH availability for recombination |
 | F12 | I(777)/I(309) | Ratio | O / OH | Radical pool balance |
 | F13 | I(656)/I(486) | Ratio | Hα / Hβ | Electron temperature / density diagnostic |
+
+
+# Why choosing these frequencies
+> NIST Atomic Spectr Database
+
+## F1 OH-309mm
+> Plasma–liquid interactions: a review and roadmap
+> Gao et al.
+
+In Gao's article, the process pathway (liquid/gas phase) is OH(aqueous/gas) + OH = H2O2(aq/gas) 
+
+## F2 O-777nm
+CO2 + e = CO + O
+
+O + H = OH
+
+## F3 F4 H alpha/beta Balmer
+
+H2O + e- = OH + H
+
+
+## F5 N2
+> Intensity ratio of spectral bands of nitrogen as a measure of electric field strength in plasmas
+
+等离子体中电子能量诊断量的方法论基础: the dependence of nitrogen spectral band intensity ratios (R₃₉₁/₃₃₇ and R₃₉₁/₃₉₄) on reduced electric field strength E/N across a wide range for the first time, deriving empirical formulae (equations 2–4) that can be used for E/N estimation in low-temperature air plasmas.
+
+## F6 CO2+
+
+Indicate the dissociation of CO2
+
+CO2 + e- = ...
+
+## Integral Band:
+
+Robustness ensurance. Due to measurement error/ noises, the spectra line might drift.
+
+## F11: OH/H alpha
+
+Since the inital process that generate OH and H is 1:1. "H2O -> H + OH"
+After that OH and H goes into different subsequent reactions. The ratio thus indicates the amount of two substances that goes into different pathway. If more OH are associated with each other, then apparently more H2O2 is generated. 
+
+And also here we use **relative abundances between species**. "Relative" means it eliminates the flucutation of overall plasma intensity
+
+## F12 O/OH
+Same logic as OH/H 
+
+## F13 H alpha/beta
+> Griem, Principles of Plasma Spectroscopy, Cambridge University Press (1997), Chapter 7
+> Optical diagnostics of atmospheric pressure air plasmas
+
+It indicates electron concentration. 
