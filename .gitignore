@@ -1,14 +1,14 @@
 # LaTeX compile outputs
-presentation poster/document.aux
-presentation poster/document.bbl
-presentation poster/document.bcf
-presentation poster/document.blg
-presentation poster/document.fdb_latexmk
-presentation poster/document.fls
-presentation poster/document.log
-presentation poster/document.nav
-presentation poster/document.out
-presentation poster/document.run.xml
-presentation poster/document.snm
-presentation poster/document.synctex.gz
-presentation poster/document.toc
+monthly update/document.aux
+monthly update/document.bbl
+monthly update/document.bcf
+monthly update/document.blg
+monthly update/document.fdb_latexmk
+monthly update/document.fls
+monthly update/document.log
+monthly update/document.nav
+monthly update/document.out
+monthly update/document.run.xml
+monthly update/document.snm
+monthly update/document.synctex.gz
+monthly update/document.toc
