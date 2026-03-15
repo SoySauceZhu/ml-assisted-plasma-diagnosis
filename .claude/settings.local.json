@@ -8,7 +8,8 @@
       "Bash(cp:*)",
       "Bash(xelatex:*)",
       "Bash(biber document:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(which python3:*)"
     ]
   }
 }

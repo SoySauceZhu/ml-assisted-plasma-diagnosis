@@ -1,0 +1,10 @@
+Conclusion
+----------
+
+This study demonstrates that domain-knowledge-driven feature engineering is the decisive factor in enabling accurate machine learning prediction of H2O2 yield from nanosecond pulsed CO2 bubble plasma.
+
+Across four iterative phases, systematic improvements were achieved: hyperparameter tuning via Bayesian optimization provided universal gains, while the most significant breakthrough came in Phase 3, where physically meaningful OES-based features replaced PCA-reduced components — lifting Ridge Config C R² from −0.17 to 0.80 and MLP Config C from 0.33 to 0.80. This confirms that domain-informed representations unlock far greater predictive power than purely data-driven dimensionality reduction.
+
+Interpretability analysis in Phase 4 further revealed that CO2 flow rate and its corresponding OES band integral are the most influential predictors of H2O2 yield, providing chemically consistent insight into the plasma process. Permutation testing validated that the Ridge model captures a genuine X→Y mapping (p < 0.00005), and bootstrap confidence interval analysis showed no statistically significant performance difference between Ridge and MLP under Config C.
+
+Ultimately, backward elimination identified that a parsimonious Ridge model using only 3 OES ratios combined with discharge parameters achieves the best generalisation, demonstrating that interpretable linear models can match or outperform complex neural networks when input features are carefully engineered. These findings offer a practical, real-time diagnostic framework for plasma-driven CO2 conversion and highlight the broader value of embedding physical domain knowledge into machine learning pipelines for scientific applications.
