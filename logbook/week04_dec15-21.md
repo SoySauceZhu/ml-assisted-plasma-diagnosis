@@ -5,6 +5,21 @@ Designed the complete Phase 1 experimental framework with 3 input configurations
 
 Started implementing the core pipeline modules: data loading, PCA analysis, and the first few model wrappers. 
 
+MLP: 
+- Linear (n_features -> 32), ReLU, dropout
+- Linear (32->16), ReLU, dropout
+- Linear (16 -> 1) ==> prediction
+CNN: 
+- 1D convolution
+- Relu
+- 1D MaxPool
+- 1D convolution
+- Relu
+- AdaptiveAvgPoolA ===> Output only one factor, then concatenated with dis_param
+- Concatenate discharge params (1 + dis_param if config C)
+- Dropout
+- Linear scaler output 
+
 Also read additional papers on plasma chemistry pathways relevant to feature interpretation.
 
 ## Tasks Completed

@@ -1,8 +1,19 @@
 # Week 12: February 28 - March 6, 2026
 
 ## Summary
-Implemented the comprehensive Phase 4 interpretability and statistical validation suite. Key discoveries: (1) the 13 OES features contain severe multicollinearity — 9 of 13 have VIF > 10; (2) backward elimination monotonically improves Ridge Config C from R² = 0.798 to 0.918 by removing redundant features; (3) a minimal model with just 3 intensity ratios + 4 discharge parameters achieves the best overall result (R² = 0.920, p < 0.0005); (4) MLP feature attributions are unreliable at n=20 (82% instability rate).
+Implemented the comprehensive Phase 4 interpretability and statistical validation suite. 
 
+Key discoveries: 
+
+(1) the 13 OES features contain severe multicollinearity — 9 of 13 have VIF > 10. Much information overlapping; 
+
+(2) backward elimination monotonically improves Ridge Config C from R² = 0.798 to 0.918 by removing redundant features; 
+
+(3) a minimal model with just 3 intensity ratios + 4 discharge parameters achieves the best overall result (R² = 0.920, p < 0.0005); 
+
+(4) MLP feature attributions are unreliable at n=20 (82% instability rate).
+
+VIF: variance inflation factor. Determine how much this feature can be represented linearly by others
 ## Tasks Completed
 - **Multi-model feature importance** (`interpretability.py`):
   - Extracted Ridge absolute coefficients, PLS VIP scores, RF permutation importance, MLP SHAP values

@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "a6d7af4fc0a1b046",
+        "id": "d987a0170f612cfb",
         "type": "tabs",
         "children": [
           {
-            "id": "382dcef8163aa767",
+            "id": "edf90dcd652f0b6b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "week11_feb21-27.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "week11_feb21-27"
+              "title": "New tab"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "week11_feb21-27.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for week11_feb21-27"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "week11_feb21-27.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from week11_feb21-27"
+              "title": "Outgoing links"
             }
           },
           {
@@ -156,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "week11_feb21-27.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of week11_feb21-27"
+              "title": "Outline"
             }
           }
         ]
@@ -183,16 +176,19 @@
       "bases:Create new base": false
     }
   },
-  "active": "382dcef8163aa767",
+  "active": "edf90dcd652f0b6b",
   "lastOpenFiles": [
-    "week10_feb14-20.md",
-    "week09_feb07-13.md",
-    "week08_jan31-feb06.md",
-    "week07_jan24-30.md",
-    "week05_dec22-28.md",
-    "week04_dec15-21.md",
-    "week03_dec08-14.md",
     "week02_dec01-07.md",
+    "week03_dec08-14.md",
+    "week04_dec15-21.md",
+    "week07_jan24-30.md",
+    "week11_feb21-27.md",
+    "week09_feb07-13.md",
+    "week12_feb28-mar06.md",
+    "week13_mar07-10.md",
+    "week10_feb14-20.md",
+    "week08_jan31-feb06.md",
+    "week05_dec22-28.md",
     "week01_nov24-30.md"
   ]
 }
