@@ -1,7 +1,15 @@
 # Week 1: November 24 - 30, 2025
 
 ## Summary
-Project officially kicked off this week. Met with supervisor to discuss the research scope: using machine learning to predict H2O2 yield rate from nanosecond pulsed CO2 bubble discharge plasma, based on Optical Emission Spectroscopy (OES) data. Began reading the group's foundational publications to understand the experimental setup and plasma chemistry.
+Project officially kicked off this week.
+
+PhD student of Prof. Tu showed me the research from Gao et al and the research plan from a phd student. 
+
+Discuss about using machine learning to predict H2O2 yield rate from nanosecond pulsed CO2 bubble discharge plasma, based on Optical Emission Spectroscopy (OES) data. 
+
+Most of the work is on learning ML basic concepts. e.g. RF, XGBoost, Linear Regression
+
+Began reading the group's foundational publications to understand the experimental setup and plasma chemistry.
 
 ## Tasks Completed
 - Attended project kickoff meeting; received the OES dataset (`oes_ml_dataset_1nm.csv`) and background materials
@@ -16,15 +24,6 @@ Project officially kicked off this week. Met with supervisor to discuss the rese
 - Alliati (2018). End of year report. — Background on plasma diagnostics techniques used in the group's earlier experiments
 - Alliati (2017). PhD Plan. — Overview of research group's long-term goals in plasma-driven chemical conversion
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 9 |
-| Coding / experiments | 1 |
-| Data analysis | 0 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **13** |
 
 ## Next Week Plan
 - Begin surveying ML methods used in plasma diagnostics and spectroscopy applications

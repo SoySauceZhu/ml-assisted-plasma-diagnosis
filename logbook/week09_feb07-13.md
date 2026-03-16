@@ -1,7 +1,13 @@
 # Week 9: February 7 - 13, 2026
 
 ## Summary
-Completed all Phase 2 tuning runs. Results showed universal improvement across all models — most dramatically MLP Config C improved from R² = -1.13 to 0.37 (eliminating the severe overfitting). However, the fundamental pattern of B >> C > A persisted, meaning that tuning alone cannot overcome the PCA bottleneck. This led to a key insight: the problem is not in the models, but in the feature representation. Began conceptualising a domain-knowledge feature engineering approach.
+Completed all Phase 2 tuning runs. Results showed universal improvement across all models — most dramatically MLP Config C improved from R² = -1.13 to 0.37 (eliminating the severe overfitting). 
+
+However, the fundamental pattern of B >> C > A persisted, meaning that tuning alone cannot overcome the PCA bottleneck. 
+
+Problem is apparently not in the models, but in the feature representation. 
+
+Began conceptualizing a domain-knowledge feature engineering approach.
 
 ## Tasks Completed
 - Completed MLP and CNN Optuna tuning (100 trials each, ~30 minutes total runtime)
@@ -21,16 +27,6 @@ Completed all Phase 2 tuning runs. Results showed universal improvement across a
 ## Papers Read
 - Re-read Shao (2018). — Focused on emission line identification in atmospheric pulsed discharges; verified OH, O, H, N2 line assignments
 - Re-read Mrozek (2021). — Cross-referenced plasma species identifications; confirmed CO2+ emission in the 398-412 nm range
-
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 4 |
-| Coding / experiments | 5 |
-| Data analysis | 5 |
-| Writing / documentation | 3 |
-| Meetings / discussion | 1 |
-| **Total** | **18** |
 
 ## Next Week Plan
 - Design the complete set of domain-knowledge OES features with physical justifications

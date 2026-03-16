@@ -23,16 +23,6 @@ Final wrap-up week. Compiled all results into the project deliverables: conclusi
 ## Papers Read
 - No new papers this week — focused entirely on writing and documentation
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 0 |
-| Coding / experiments | 1 |
-| Data analysis | 1 |
-| Writing / documentation | 6 |
-| Meetings / discussion | 1 |
-| **Total** | **9** |
-
 ## Project Completion Notes
 - Total project duration: 12.5 working weeks (Nov 24, 2025 - Mar 10, 2026, excluding Dec 29 - Jan 23 vacation)
 - Total estimated hours: ~183 hours

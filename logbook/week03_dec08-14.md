@@ -1,7 +1,17 @@
 # Week 3: December 8 - 14, 2025
 
 ## Summary
-Intensive literature review week — read 12 papers spanning plasma diagnostics, OES analysis, chemometrics, and ML for spectroscopy. Solidified the understanding of PCA as the initial dimensionality reduction strategy and LOOCV as the only viable cross-validation approach for n=20. Drafted the overall ML pipeline design.
+Intensive literature review week
+- spanning plasma diagnostics 
+- OES analysis
+- chemometrics 
+- ML for spectroscopy.
+ 
+Solidified the understanding of PCA as the initial dimensionality reduction strategy and LOOCV as the only viable cross-validation approach for n=20. 
+
+Learning more about ML models: PCA, SVR
+
+Drafted the overall ML pipeline design.
 
 ## Tasks Completed
 - Read a large batch of papers on plasma diagnostics, pulsed discharges, OES-based process monitoring, and ML for spectral data
@@ -25,15 +35,6 @@ Intensive literature review week — read 12 papers spanning plasma diagnostics,
 - materials-16-03846 (2023). — Materials characterisation via spectroscopy and ML
 - processes-10-00654 (2022). — Process monitoring with OES in industrial plasma applications
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 9 |
-| Coding / experiments | 2 |
-| Data analysis | 0 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **14** |
 
 ## Next Week Plan
 - Finalise Phase 1 experimental design: define 3 input configurations (OES only, discharge params only, combined)

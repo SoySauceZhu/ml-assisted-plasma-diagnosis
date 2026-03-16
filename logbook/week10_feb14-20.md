@@ -1,7 +1,13 @@
 # Week 10: February 14 - 20, 2026
 
 ## Summary
-Designed and implemented the 13 hand-crafted OES features for Phase 3. Each feature is grounded in plasma chemistry: 7 single-wavelength intensities tracking specific reactive species, 3 spectral band integrals for noise-robust emission measurement, and 3 intensity ratios as self-normalising diagnostics. Also read new papers on ML for plasma-chemical process monitoring that validated this domain-knowledge approach.
+Looked up plasma chemistry, plasma spectroscopy textbook/tutorials. Determined OES features in the data set. 
+
+Designed and implemented the 13 hand-crafted OES features for Phase 3. 
+
+Each feature is grounded in plasma chemistry: 7 single-wavelength intensities tracking specific reactive species, 3 spectral band integrals for noise-robust emission measurement, and 3 intensity ratios as self-normalising diagnostics. 
+
+Also read new papers on ML for plasma-chemical process monitoring that validated this domain-knowledge approach.
 
 ## Tasks Completed
 - Defined 13 OES features across 3 categories:
@@ -20,16 +26,6 @@ Designed and implemented the 13 hand-crafted OES features for Phase 3. Each feat
 ## Papers Read
 - Wang et al. (2021). "Machine learning prediction of tar from biomass pyrolysis." *J. Hazardous Materials*. — ML for plasma-chemical process monitoring; demonstrated that physically meaningful features outperform raw spectral input for small datasets
 - (2024). *Journal of Energy Chemistry*. — Recent work on plasma-driven chemical synthesis with spectroscopic monitoring; validated the feature engineering approach for OES-based prediction
-
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 3 |
-| Coding / experiments | 7 |
-| Data analysis | 4 |
-| Writing / documentation | 3 |
-| Meetings / discussion | 1 |
-| **Total** | **18** |
 
 ## Next Week Plan
 - Run Phase 3 LOOCV evaluation with the engineered features

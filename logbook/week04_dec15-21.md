@@ -1,7 +1,11 @@
 # Week 4: December 15 - 21, 2025
 
 ## Summary
-Designed the complete Phase 1 experimental framework with 3 input configurations and 7 ML models. Started implementing the core pipeline modules: data loading, PCA analysis, and the first few model wrappers. Also read additional papers on plasma chemistry pathways relevant to feature interpretation.
+Designed the complete Phase 1 experimental framework with 3 input configurations and 7 ML models. 
+
+Started implementing the core pipeline modules: data loading, PCA analysis, and the first few model wrappers. 
+
+Also read additional papers on plasma chemistry pathways relevant to feature interpretation.
 
 ## Tasks Completed
 - Designed the 3-configuration comparison framework:
@@ -20,15 +24,6 @@ Designed the complete Phase 1 experimental framework with 3 input configurations
 - 114103_1_online (2020). — Plasma chemistry reaction pathways and kinetics; helped map species relationships (CO2 -> CO + O, H2O -> OH + H, OH + OH -> H2O2)
 - s44205-024-00098-7 (2024). — Plasma chemistry modelling approaches; provided theoretical framework for understanding why certain species correlate with H2O2 yield
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 5 |
-| Coding / experiments | 5 |
-| Data analysis | 2 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **15** |
 
 ## Next Week Plan
 - Complete implementation of all 7 model wrappers (SVR, XGBoost, RF, MLP, CNN)

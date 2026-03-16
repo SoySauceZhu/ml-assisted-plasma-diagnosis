@@ -1,3 +1,13 @@
+"""
+Plotting Module
+================
+Generates all Phase 1 result visualisations:
+  - Individual predicted-vs-actual scatter plots per model-config
+  - Grid view of all scatter plots (7 models x 3 configs)
+  - Heatmaps of R2/RMSE/MAE (models on rows, configs on columns)
+  - Grouped bar chart comparing R2 across models and configs
+"""
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,6 +16,17 @@ from .config import FIGURES_DIR, TABLES_DIR
 
 
 def plot_predicted_vs_actual(result, save_path=None):
+    """Plot predicted vs actual H2O2 yield for one model-config combination.
+
+    Creates a scatter plot with a red dashed 1:1 reference line (ideal predictions
+    fall on this line). Displays R2 and RMSE in the title. Equal aspect ratio
+    ensures visual accuracy.
+
+    Args:
+        result: Dict from run_loocv_for_model() with keys "y_true", "y_pred",
+                "model", "config", "R2", "RMSE".
+        save_path: File path to save the plot.
+    """
     fig, ax = plt.subplots(figsize=(5, 5))
     ax.scatter(result["y_true"], result["y_pred"], s=50, edgecolors="k", zorder=3)
     lims = [
@@ -28,6 +49,15 @@ def plot_predicted_vs_actual(result, save_path=None):
 
 
 def plot_all_predicted_vs_actual(all_results, save_dir=None):
+    """Grid of predicted-vs-actual scatter plots for all model-config combinations.
+
+    Creates a (n_models x n_configs) subplot grid. Each cell shows one scatter
+    plot. Missing combinations (e.g., CNN Config B) are marked "N/A".
+
+    Args:
+        all_results: List of result dicts from run_all_evaluations().
+        save_dir: Directory to save the grid plot (as predicted_vs_actual_grid.png).
+    """
     models = list(dict.fromkeys(r["model"] for r in all_results))
     configs = list(dict.fromkeys(r["config"] for r in all_results))
     result_map = {(r["model"], r["config"]): r for r in all_results}
@@ -71,6 +101,16 @@ def plot_all_predicted_vs_actual(all_results, save_dir=None):
 
 
 def plot_summary_heatmap(results_df, metric, save_path=None):
+    """Heatmap of a metric (R2, RMSE, or MAE) with models on rows and configs on columns.
+
+    Uses RdYlGn colourmap for R2 (green=good, red=bad) and reversed for error
+    metrics (RMSE, MAE). Cell values are annotated with 3 decimal places.
+
+    Args:
+        results_df: Summary DataFrame with columns Model, Config, R2, RMSE, MAE.
+        metric: Which metric to display ("R2", "RMSE", or "MAE").
+        save_path: File path to save the heatmap.
+    """
     pivot = results_df.pivot(index="Model", columns="Config", values=metric)
     model_order = ["Ridge", "PLS", "SVR", "XGBoost", "RF", "MLP", "CNN"]
     pivot = pivot.reindex([m for m in model_order if m in pivot.index])
@@ -86,6 +126,16 @@ def plot_summary_heatmap(results_df, metric, save_path=None):
 
 
 def plot_model_comparison_bar(results_df, save_path=None):
+    """Grouped bar chart comparing R2 across all models, with separate bars per config.
+
+    Each model gets a cluster of 3 bars (Config A, B, C). A horizontal line at
+    R2=0 marks the baseline (predicting the mean). This plot makes the Config B
+    dominance pattern immediately visible.
+
+    Args:
+        results_df: Summary DataFrame.
+        save_path: File path to save the bar chart.
+    """
     fig, ax = plt.subplots(figsize=(10, 5))
     model_order = ["Ridge", "PLS", "SVR", "XGBoost", "RF", "MLP", "CNN"]
     df = results_df.copy()
@@ -117,18 +167,34 @@ def plot_model_comparison_bar(results_df, save_path=None):
 
 
 def generate_all_plots(all_results, results_df):
+    """Master plotting function — generates all Phase 1 visualisations.
+
+    Produces:
+      - Individual predicted-vs-actual scatter for each model-config
+      - Combined grid of all scatter plots
+      - Heatmaps for R2, RMSE, and MAE
+      - Grouped bar chart of R2 comparison
+
+    Args:
+        all_results: List of result dicts from run_all_evaluations().
+        results_df: Summary DataFrame from run_all_evaluations().
+    """
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
     TABLES_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Individual scatter plots per model-config
     for r in all_results:
         fname = f"predicted_vs_actual_{r['model']}_{r['config']}.png"
         plot_predicted_vs_actual(r, FIGURES_DIR / fname)
 
+    # Combined grid of all scatter plots
     plot_all_predicted_vs_actual(all_results, FIGURES_DIR)
 
+    # Heatmaps for each metric
     for metric in ["R2", "RMSE", "MAE"]:
         plot_summary_heatmap(results_df, metric, FIGURES_DIR / f"heatmap_{metric}.png")
 
+    # Grouped bar chart
     plot_model_comparison_bar(results_df, FIGURES_DIR / "model_comparison_bar.png")
 
     print(f"All plots saved to {FIGURES_DIR}")

@@ -1,7 +1,8 @@
 # Week 11: February 21 - 27, 2026
 
 ## Summary
-Phase 3 produced the most significant breakthrough of the entire project. Domain-knowledge feature engineering dramatically improved all models: Ridge Config C jumped from R² = -0.17 (Phase 1) to 0.80, and MLP Config C from -1.13 to 0.81 — both now surpassing Phase 2's best CNN result (0.77). This confirms the central hypothesis: on small datasets, domain expertise matters more than model complexity. Began planning the Phase 4 interpretability analysis.
+Phase 3 produced the most significant breakthrough of the entire project. 
+Domain-knowledge feature engineering dramatically improved all models: Ridge Config C jumped from R² = -0.17 (Phase 1) to 0.80, and MLP Config C from -1.13 to 0.81 — both now surpassing Phase 2's best CNN result (0.77). This confirms the central hypothesis: on small datasets, domain expertise matters more than model complexity. Began planning the Phase 4 interpretability analysis.
 
 ## Tasks Completed
 - Ran full Phase 3 LOOCV evaluation for 4 models (Ridge, PLS, RF, MLP) x 3 configs with engineered features
@@ -20,16 +21,6 @@ Phase 3 produced the most significant breakthrough of the entire project. Domain
 ## Papers Read
 - Biomass Pyrolysis Data documents. — Studied as a methodological reference for ML interpretability in chemical process prediction; the feature importance and ablation study approaches informed the Phase 4 design
 - Machine learning prediction of pyrolytic products of lignocellulosic biomass (2022). — Demonstrated SHAP analysis and feature ablation for interpretable ML in chemical engineering; adapted their methodology for our Phase 4 plan
-
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 2 |
-| Coding / experiments | 5 |
-| Data analysis | 6 |
-| Writing / documentation | 3 |
-| Meetings / discussion | 1 |
-| **Total** | **17** |
 
 ## Next Week Plan
 - Implement Phase 4 interpretability analyses:

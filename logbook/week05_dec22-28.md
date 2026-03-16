@@ -1,7 +1,11 @@
 # Week 5: December 22 - 28, 2025
 
 ## Summary
-Pre-vacation push to get the Phase 1 pipeline fully functional. Completed all 7 model implementations and the LOOCV evaluation framework. Ran PCA analysis on the dataset — found that 11 components are needed for 95% variance, which is higher than expected. Initial test runs revealed training stability issues with MLP and CNN on the small dataset.
+Pre-vacation push to get the Phase 1 pipeline fully functional. 
+
+Completed all 7 model implementations and the LOOCV evaluation framework. Ran PCA analysis on the dataset. 
+
+Result shows that higher than expected. Initial test runs revealed training stability issues with MLP and CNN on the small dataset.
 
 ## Tasks Completed
 - Implemented remaining model wrappers:
@@ -21,15 +25,6 @@ Pre-vacation push to get the Phase 1 pipeline fully functional. Completed all 7 
 - Validity of three-fluid plasma modelling for AC-DBD plasma actuators (2023). — Fluid modelling context for discharge physics; complemented the OES-based approach with physical modelling perspective
 - dad5569supp1 (supplementary materials). — Additional methodological details on spectral data preprocessing and normalisation techniques
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 2 |
-| Coding / experiments | 7 |
-| Data analysis | 3 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **15** |
 
 ## Next Week Plan
 - **VACATION**: December 29, 2025 - January 23, 2026

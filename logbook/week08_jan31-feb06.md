@@ -1,7 +1,12 @@
 # Week 8: January 31 - February 6, 2026
 
 ## Summary
-Designed and implemented the Phase 2 Bayesian hyperparameter tuning pipeline using Optuna. Focused on tuning RF, MLP, and CNN — the three models showing the most potential for improvement. Also read new papers on ML optimisation methods and plasma process control, which reinforced the importance of proper hyperparameter selection for small datasets.
+
+Learnt to use Optuna and its mechanism. 
+
+Designed and implemented the Phase 2 Bayesian hyperparameter tuning pipeline using Optuna. 
+
+Read new papers on ML optimisation methods and plasma process control, which reinforced the importance of proper hyperparameter selection for small datasets.
 
 ## Tasks Completed
 - Installed and configured Optuna for Bayesian optimisation with TPE (Tree-structured Parzen Estimator) sampler
@@ -18,16 +23,6 @@ Designed and implemented the Phase 2 Bayesian hyperparameter tuning pipeline usi
 ## Papers Read
 - 2404.06817v2 (2024). — Advanced ML methodology paper; discussed Bayesian optimisation strategies for scientific applications with limited data, reinforcing our choice of Optuna over grid search
 - IEEE Plasma 2019. — IEEE paper on plasma process optimisation with ML; demonstrated successful application of tuned ML models for plasma parameter prediction, motivating Phase 2 approach
-
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 3 |
-| Coding / experiments | 9 |
-| Data analysis | 3 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **18** |
 
 ## Next Week Plan
 - Complete all Phase 2 tuning runs and analyse results

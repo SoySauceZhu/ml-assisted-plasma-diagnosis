@@ -37,16 +37,6 @@ Implemented the comprehensive Phase 4 interpretability and statistical validatio
 - Urabe (2016). *Plasma Sources Sci. Technol.* 25, 045004. — OES quantification in plasma-liquid systems; relevant to our H2O2 prediction context
 - coatings-11-01221 (2021). — Plasma process monitoring with OES diagnostics; feature importance analysis for coating process control
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 2 |
-| Coding / experiments | 4 |
-| Data analysis | 5 |
-| Writing / documentation | 4 |
-| Meetings / discussion | 1 |
-| **Total** | **16** |
-
 ## Next Week Plan
 - Compile all results into the final report
 - Prepare presentation slides and poster for bench inspection

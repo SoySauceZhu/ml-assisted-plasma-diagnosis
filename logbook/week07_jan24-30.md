@@ -1,7 +1,7 @@
 # Week 7: January 24 - 30, 2026
 
 ## Summary
-Returned from the holiday break. Ran the full Phase 1 LOOCV evaluation across all 7 models and 3 configurations (21 total combinations). The results were surprising: Config B (discharge parameters only) dominated all others, with Ridge and PLS both achieving R-squared of approximately 0.90, while OES-based configurations performed poorly or even negatively. This was not what I expected going in.
+Implement, Debug and Ran the full Phase 1 LOOCV evaluation across all 7 models and 3 configurations (21 total combinations).
 
 ## Tasks Completed
 - Ran complete Phase 1 LOOCV evaluation for all 21 model-config combinations
@@ -20,15 +20,10 @@ Returned from the holiday break. Ran the full Phase 1 LOOCV evaluation across al
 ## Papers Read
 - Re-read Gao et al. (2024) — focused on the plasma chemistry pathway sections to understand why discharge parameters (which directly control the plasma energy input) predict H2O2 yield so well, while OES (which measures secondary emission) fails under PCA
 
-## Hours Spent
-| Activity | Hours |
-|----------|-------|
-| Literature review | 3 |
-| Coding / experiments | 5 |
-| Data analysis | 6 |
-| Writing / documentation | 2 |
-| Meetings / discussion | 1 |
-| **Total** | **17** |
+
+
+
+
 
 ## Next Week Plan
 - Design Phase 2: hyperparameter tuning strategy using Bayesian optimisation (Optuna) for RF, MLP, and CNN — the models with the most room for improvement
