@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d987a0170f612cfb",
+        "id": "00568853d3e3bc41",
         "type": "tabs",
         "children": [
           {
-            "id": "edf90dcd652f0b6b",
+            "id": "bccf598cad43555f",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -176,19 +176,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "edf90dcd652f0b6b",
+  "active": "bccf598cad43555f",
   "lastOpenFiles": [
-    "week02_dec01-07.md",
-    "week03_dec08-14.md",
     "week04_dec15-21.md",
-    "week07_jan24-30.md",
-    "week11_feb21-27.md",
-    "week09_feb07-13.md",
-    "week12_feb28-mar06.md",
+    "week01_nov24-30.md",
     "week13_mar07-10.md",
-    "week10_feb14-20.md",
-    "week08_jan31-feb06.md",
+    "week12_feb28-mar06.md",
     "week05_dec22-28.md",
-    "week01_nov24-30.md"
+    "week03_dec08-14.md",
+    "week11_feb21-27.md",
+    "week02_dec01-07.md",
+    "presentation_transcript.md",
+    "week07_jan24-30.md",
+    "week09_feb07-13.md",
+    "week10_feb14-20.md",
+    "week08_jan31-feb06.md"
   ]
 }

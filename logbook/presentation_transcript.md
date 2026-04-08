@@ -85,7 +85,7 @@ There are different methods to evaluate the features importance for each model. 
 
 I also did bootstrap resampling to get confidence intervals for R-squared, and found that there is no statistically significant difference between Ridge Config C and MLP Config C. This means that a simple linear model performs just as well as the neural network.
 
-I ran a permutation test to make sure the model is truly learning a real pattern. Because, in a small scale data setting, the model it prone to overfitting the data. Overfitting means that the model only remember the data shown to it, find a trivial solution for a given senario. Permutation test is a way to tell if model really learns the relationship between input X and output Y. The result gave a p-value less than 0.00005, which confirms the prediction is genuine.
+I ran a permutation test to make sure the model is truly learning a real pattern. Because, in a small scale data setting, the model is easily to get overfitting the data. Overfitting means that the model only remember the data shown to it, find a trivial solution for a given senario. Permutation test is a way to tell if model really learns the relationship between input X and output Y. The result gave a p-value less than 0.00005, which confirms the prediction is genuine.
 
 Finally, I used backward elimination and category ablation to remove less important features one by one, to improve the generalization ability of model. The result is that the best model is a Ridge regression with just 3 OES ratio features plus the 4 discharge parameters -- only 7 features in total.
 
@@ -152,7 +152,3 @@ The main original contribution is showing that domain-knowledge-driven feature e
 
 ### "How do your results compare to the original specifications?"
 The original goal was to use ML to predict H2O2 yield from OES data. Initially this seemed difficult because OES-only models performed poorly. But through the 4-phase approach, I achieved R-squared of 0.92, which exceeded my original expectations. The most significant change from the original plan was the shift from data-driven PCA to domain-knowledge-based feature engineering in Phase 3.
-
----
-
-*Tip: Remember to point to the relevant figures and tables on the poster as you talk through each section. Speak clearly and not too fast. If you do not understand a question, it is okay to ask them to repeat it.*
