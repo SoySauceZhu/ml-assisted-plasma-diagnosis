@@ -13,3 +13,21 @@ monthly update/document.snm
 monthly update/document.synctex.gz
 monthly update/document.toc
 *\~*
+
+# Final report LaTeX compile outputs
+final report/report/*.aux
+final report/report/*.bbl
+final report/report/*.bcf
+final report/report/*.blg
+final report/report/*.fdb_latexmk
+final report/report/*.fls
+final report/report/*.lof
+final report/report/*.log
+final report/report/*.lot
+final report/report/*.nav
+final report/report/*.out
+final report/report/*.run.xml
+final report/report/*.snm
+final report/report/*.synctex.gz
+final report/report/*.toc
+final report/report/*.pdf
