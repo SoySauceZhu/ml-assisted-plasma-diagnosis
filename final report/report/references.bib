@@ -1,16 +1,199 @@
 % IEEE-format BibTeX references
-% Fill in the details below before submission
+% Updated in Phase 2 with real citations from resources/PAPER_SUMMARIES.md
 
-@article{gao2023plasma,
-  author  = {Gao, [First Name] and others},
-  title   = {{TODO: Full title of XJTU plasma dataset paper}},
-  journal = {TODO: Journal name},
-  volume  = {TODO},
-  number  = {TODO},
-  pages   = {TODO--TODO},
-  year    = {TODO},
-  doi     = {TODO}
+% ============================================================
+% Category B — Dataset source and domain background
+% ============================================================
+
+% THE dataset source paper (replaces old gao2023plasma placeholder)
+@article{Gao2024NSCO2Discharge,
+  title={Efficient synthesis of CO and H2 via nanosecond pulsed CO2 bubble discharge},
+  author={Gao, Yuting and Zhou, Renwu and Hong, Longfei and Chen, Bohan and Sun, Jing and Zhou, Rusen and Liu, Zhijie},
+  journal={Journal of Physics D: Applied Physics},
+  volume={57},
+  pages={375204},
+  year={2024},
+  doi={10.1088/1361-6463/ad5569}
 }
+
+% OES diagnostics fundamentals — traditional spectroscopic methods
+@article{Laux2003OESAir,
+  title={Optical diagnostics of atmospheric pressure air plasmas},
+  author={Laux, C O and Spence, T G and Kruger, C H and Zare, R N},
+  journal={Plasma Sources Science and Technology},
+  volume={12},
+  pages={125--138},
+  year={2003},
+  doi={10.1088/0963-0252/12/2/301}
+}
+
+% Nanosecond pulsed discharge mechanism review
+@article{Shao2018PulsedDischarges,
+  title={Atmospheric-pressure pulsed discharges and plasmas: mechanism, characteristics and applications},
+  author={Shao, Tao and Wang, Ruixue and Zhang, Cheng and Yan, Ping},
+  journal={High Voltage},
+  volume={3},
+  pages={14--20},
+  year={2018},
+  doi={10.1049/hve.2016.0014}
+}
+
+% Line intensity ratios for plasma diagnostics (traditional method)
+@article{Paris2005N2Ratio,
+  title={Intensity ratio of spectral bands of nitrogen as a measure of electric field strength in plasmas},
+  author={Paris, P and Aints, M and Valk, F and Plank, T and Haljaste, A and Kozlov, K V and Wagner, H E},
+  journal={Journal of Physics D: Applied Physics},
+  volume={38},
+  pages={3894--3899},
+  year={2005},
+  doi={10.1088/0022-3727/38/21/010}
+}
+
+% ============================================================
+% Category A — Directly relevant OES + ML papers
+% ============================================================
+
+% PCA + RF/DNN for Ar plasma OES prediction (our "gap" target — uses PCA)
+@article{Srikar2025MLOES,
+  title={Machine Learning-Enabled Prediction of Optical Emission Spectra in Scalable Non-Thermal Ar Atmospheric Pressure Plasma Multi Jet},
+  author={Srikar, P.S.N.S.R. and Suresh, Indhu and Gangwar, R.K.},
+  journal={Journal of Physics D: Applied Physics},
+  volume={58},
+  pages={415204},
+  year={2025},
+  doi={10.1088/1361-6463/ae0b81}
+}
+
+% RF + DNN with CR model for real-time Te prediction from OES
+@article{Srikar2024Accelerated,
+  title={Accelerated real-time plasma diagnostics: Integrating argon collisional-radiative model with machine learning methods},
+  author={Srikar, P.S.N.S.R. and Suresh, Indhu and Gangwar, R.K.},
+  journal={Spectrochimica Acta Part B: Atomic Spectroscopy},
+  volume={215},
+  pages={106909},
+  year={2024},
+  doi={10.1016/j.sab.2024.106909}
+}
+
+% SVM + line intensity ratios for ne/Te — uses domain-knowledge features like us
+@article{Wang2025MLOESCascaded,
+  title={Machine learning assisted optical emission spectroscopy to determine electron density and electron temperature in a cascaded arc plasma},
+  author={Wang, Yong and Zhou, Lina and Li, Cong and Feng, Chunlei and Ding, Hongbin},
+  journal={Nuclear Materials and Energy},
+  volume={45},
+  pages={101992},
+  year={2025},
+  doi={10.1016/j.nme.2025.101992}
+}
+
+% PCA + MLP for DBD plasma OES diagnostics (our "gap" target — uses PCA)
+@article{Stefas2025MLSDBD,
+  title={Machine learning assisted optical diagnostics on a cylindrical surface dielectric barrier discharge},
+  author={Stefas, D. and Giotis, K. and Invernizzi, L. and H{\"o}ft, H. and Hassouni, K. and Prasanna, S. and Svarnas, P. and Lombardi, G. and Gazeli, K.},
+  journal={arXiv:2404.06817},
+  year={2025}
+}
+
+% Foundational: ML for real-time CAP diagnostics from OES
+@article{Gidon2019MLCAP,
+  title={Machine Learning for Real-Time Diagnostics of Cold Atmospheric Plasma Sources},
+  author={Gidon, Dogan and Pei, Xuekai and Bonzanini, Angelo D. and Graves, David B. and Mesbah, Ali},
+  journal={IEEE Transactions on Radiation and Plasma Medical Sciences},
+  volume={3},
+  number={5},
+  pages={597--607},
+  year={2019},
+  doi={10.1109/TRPMS.2019.2919582}
+}
+
+% PCA + deep ANN for plasma-in-liquid OES — PCA insufficient
+@article{Wang2019MLOESAqueous,
+  title={Development and testing of an efficient data acquisition platform for machine learning of optical emission spectroscopy of plasmas in aqueous solution},
+  author={Wang, Ching-Yu and Hsu, Cheng-Che},
+  journal={Plasma Sources Science and Technology},
+  volume={28},
+  pages={105013},
+  year={2019},
+  doi={10.1088/1361-6595/ab45e5}
+}
+
+% ML virtual metrology for ne/Te from OES in nitrogen plasma
+@article{Park2021MLOESNitrogen,
+  title={Machine Learning Prediction of Electron Density and Temperature from Optical Emission Spectroscopy in Nitrogen Plasma},
+  author={Park, Jun-Hyoung and Cho, Ji-Ho and Yoon, Jung-Sik and Song, Jung-Ho},
+  journal={Coatings},
+  volume={11},
+  pages={1221},
+  year={2021},
+  doi={10.3390/coatings11101221}
+}
+
+% ============================================================
+% Category C — Broader ML context in plasma
+% ============================================================
+
+% ML optimization for plasma catalysis (same supervisor group — Prof. Tu)
+@article{Cai2024MLDRM,
+  title={Machine learning-driven optimization of plasma-catalytic dry reforming of methane},
+  author={Cai, Yuxiang and Mei, Danhua and Chen, Yanzhen and Bogaerts, Annemie and Tu, Xin},
+  journal={Journal of Energy Chemistry},
+  volume={96},
+  pages={153--163},
+  year={2024},
+  doi={10.1016/j.jechem.2024.01.001}
+}
+
+% Hybrid ML for plasma tar reforming (small-data ML in plasma context)
+@article{Wang2021PlasmaTarML,
+  title={Prediction and evaluation of plasma arc reforming of naphthalene using a hybrid machine learning model},
+  author={Wang, Yaolin and Liao, Zinan and Mathieu, St{\'e}phanie and Bin, Feng and Tu, Xin},
+  journal={Journal of Hazardous Materials},
+  volume={404},
+  pages={123965},
+  year={2021},
+  doi={10.1016/j.jhazmat.2020.123965}
+}
+
+% Domain features outperform generic inputs (parallel finding in biomass)
+@article{Dong2023MLBiomass,
+  title={Machine learning prediction of pyrolytic products of lignocellulosic biomass based on physicochemical characteristics and pyrolysis conditions},
+  author={Dong, Zixun and Bai, Xiaopeng and Xu, Daochun and Li, Wenbin},
+  journal={Bioresource Technology},
+  volume={367},
+  pages={128182},
+  year={2023},
+  doi={10.1016/j.biortech.2022.128182}
+}
+
+% ============================================================
+% Category D — Future work references only
+% ============================================================
+
+% Transfer learning review (cite in Future Work for cross-reactor generalisation)
+@article{Zhao2024TransferSSL,
+  title={A comparison review of transfer learning and self-supervised learning: Definitions, applications, advantages and limitations},
+  author={Zhao, Zehui and Alzubaidi, Laith and Zhang, Jinglan and Duan, Ye and Gu, Yuantong},
+  journal={Expert Systems with Applications},
+  volume={242},
+  pages={122807},
+  year={2024},
+  doi={10.1016/j.eswa.2023.122807}
+}
+
+% Deep UDA review (cite in Future Work for cross-reactor domain adaptation)
+@article{Liu2022UDA,
+  title={Deep Unsupervised Domain Adaptation: A Review of Recent Advances and Perspectives},
+  author={Liu, Xiaofeng and Yoo, Chaehwa and Xing, Fangxu and Oh, Hyejin and El Fakhri, Georges and Kang, Je-Won and Woo, Jonghye},
+  journal={APSIPA Transactions on Signal and Information Processing},
+  volume={1},
+  pages={1--48},
+  year={2022},
+  doi={10.1155/2022/8065794}
+}
+
+% ============================================================
+% Methodology references
+% ============================================================
 
 @inproceedings{optuna2019,
   author    = {Akiba, Takuya and Sano, Shotaro and Yanase, Toshihiko and Ohta, Takeru and Koyama, Masanori},
@@ -19,18 +202,4 @@
   pages     = {2623--2631},
   year      = {2019},
   doi       = {10.1145/3292500.3330701}
-}
-
-@article{todo_oes_ref,
-  author  = {TODO},
-  title   = {{TODO: OES ratio features in plasma diagnostics}},
-  journal = {TODO},
-  year    = {TODO}
-}
-
-@article{example_sota,
-  author  = {TODO},
-  title   = {{TODO: State-of-the-art OES + ML paper}},
-  journal = {TODO},
-  year    = {TODO}
 }

@@ -157,7 +157,7 @@ This report presents a machine learning (ML) pipeline for real-time prediction o
 
 \subsection{Background and Motivation}
 
-Nanosecond pulsed CO\textsubscript{2} bubble plasma discharge is an emerging technique for converting greenhouse gases into value-added chemicals including hydrogen (H\textsubscript{2}) and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2})~\cite{gao2023plasma}. \todo{Add citation for CO2 plasma chemistry.} As global demand for green chemical processes grows, real-time monitoring of product yield becomes a critical bottleneck: conventional H\textsubscript{2}O\textsubscript{2} quantification requires stopping the reaction, sampling, and offline titration — a process that is slow, intrusive, and incompatible with closed-loop control.
+Nanosecond pulsed CO\textsubscript{2} bubble plasma discharge is an emerging technique for converting greenhouse gases into value-added chemicals including hydrogen (H\textsubscript{2}) and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2})~\cite{Gao2024NSCO2Discharge}. \todo{Add citation for CO2 plasma chemistry.} As global demand for green chemical processes grows, real-time monitoring of product yield becomes a critical bottleneck: conventional H\textsubscript{2}O\textsubscript{2} quantification requires stopping the reaction, sampling, and offline titration — a process that is slow, intrusive, and incompatible with closed-loop control.
 
 Optical Emission Spectroscopy (OES) offers a non-intrusive, in-situ diagnostic window into the plasma. By recording the light emitted by excited species, OES reveals information about plasma composition and energy without disturbing the discharge. However, a single OES measurement comprises 701 wavelength points, making direct application of machine learning (ML) models challenging due to high dimensionality and the risk of spurious correlations.
 
@@ -174,7 +174,7 @@ This project addresses three primary objectives:
 
 \todo{Briefly review 3–5 papers on OES-based ML for plasma diagnostics. Emphasise that prior work uses generic PCA and does not exploit plasma chemistry knowledge.}
 
-Existing ML-based plasma diagnostic studies typically apply PCA or partial least squares directly to raw OES spectra~\cite{example_sota}. While these approaches reduce dimensionality, they discard the physical meaning of individual emission lines, limiting both predictive accuracy and interpretability. This work demonstrates that selecting features grounded in plasma chemistry literature transforms model performance.
+Existing ML-based plasma diagnostic studies typically apply PCA or partial least squares directly to raw OES spectra~\cite{Srikar2025MLOES}. While these approaches reduce dimensionality, they discard the physical meaning of individual emission lines, limiting both predictive accuracy and interpretability. This work demonstrates that selecting features grounded in plasma chemistry literature transforms model performance.
 
 % ============================================================
 \newpage
@@ -183,7 +183,7 @@ Existing ML-based plasma diagnostic studies typically apply PCA or partial least
 
 \subsection{Dataset and Experimental Setup}
 
-The dataset was provided by Gao et al.\ at Xi'an Jiaotong University~\cite{gao2023plasma} and is publicly available. It contains \textbf{701 OES samples} collected during nanosecond pulsed CO\textsubscript{2} bubble discharge experiments. Each sample consists of:
+The dataset was provided by Gao et al.\ at Xi'an Jiaotong University~\cite{Gao2024NSCO2Discharge} and is publicly available. It contains \textbf{701 OES samples} collected during nanosecond pulsed CO\textsubscript{2} bubble discharge experiments. Each sample consists of:
 \begin{itemize}
     \item A 701-point OES spectrum (wavelength range: \todo{add range} nm).
     \item Four discharge parameters: CO\textsubscript{2} flow rate (\si{sccm}), pulse frequency (\si{Hz}), pulse width (\si{ns}), and rise time (\si{ns}).
@@ -228,7 +228,7 @@ Rather than relying on PCA to select OES information automatically, 13 physicall
 \begin{itemize}
     \item \textbf{Emission line intensities:} OH (309\,nm), O (777\,nm), H$_\beta$ (486\,nm), H$_\alpha$ (656\,nm), N\textsubscript{2} (337\,nm), CO\textsubscript{2}\textsuperscript{+} (406\,nm), C\textsubscript{2} (516\,nm) — each representing species directly relevant to plasma chemistry and H\textsubscript{2}O\textsubscript{2} formation pathways.
     \item \textbf{Band integrals:} OH band (306–312\,nm), CO\textsubscript{2}\textsuperscript{+} band (398–412\,nm), CO/H$_\beta$ band (460–500\,nm) — integral over a spectral band is robust to instrument drift and wavelength calibration shifts.
-    \item \textbf{Spectroscopic ratios:} OH/H$_\alpha$ (309/656\,nm), H$_\alpha$/H$_\beta$ (656/486\,nm), O/OH (777/309\,nm) — commonly used in plasma diagnostics literature to characterise relative species populations~\cite{todo_oes_ref}.
+    \item \textbf{Spectroscopic ratios:} OH/H$_\alpha$ (309/656\,nm), H$_\alpha$/H$_\beta$ (656/486\,nm), O/OH (777/309\,nm) — commonly used in plasma diagnostics literature to characterise relative species populations~\cite{Laux2003OESAir}.
 \end{itemize}
 
 Combined with 4 discharge parameters, Config C comprised \textbf{17 features} in this phase.
@@ -371,9 +371,9 @@ Comparing with my original skills audit, I entered the project with strong Pytho
 
 % If not using BibTeX, use thebibliography environment:
 % \begin{thebibliography}{99}
-%   \bibitem{gao2023plasma} \todo{Full IEEE citation for Gao et al. XJTU dataset paper.}
+%   \bibitem{Gao2024NSCO2Discharge} \todo{Full IEEE citation for Gao et al. XJTU dataset paper.}
 %   \bibitem{optuna2019} T. Akiba et al., ``Optuna: A Next-generation Hyperparameter Optimization Framework,'' in \textit{Proc. 25th ACM SIGKDD Int. Conf. Knowledge Discovery \& Data Mining}, 2019, pp. 2623--2631.
-%   \bibitem{example_sota} \todo{Add state-of-the-art OES + ML paper citation.}
+%   \bibitem{Srikar2025MLOES} \todo{Add state-of-the-art OES + ML paper citation.}
 % \end{thebibliography}
 
 % ============================================================
