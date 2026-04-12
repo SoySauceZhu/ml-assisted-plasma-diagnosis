@@ -90,10 +90,13 @@ A classical plasma diagnostic quantity. In an optically thin plasma under Case B
 
 In Gao's article, the process pathway (liquid/gas phase) is OH(aqueous/gas) + OH = H2O2(aq/gas) 
 
+Reference: Gao's article itself
+
 ## F2 O-777nm
 CO2 + e = CO + O
 
 O + H = OH
+Reference: Gao's article itself
 
 ## F3 F4 H alpha/beta Balmer
 
