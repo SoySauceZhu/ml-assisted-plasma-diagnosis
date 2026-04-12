@@ -124,3 +124,114 @@ Summarize:
 - Include quantitative results wherever possible (exact R², RMSE, p-values from `main.tex`)
 - Keep language concise and technical
 - Reference specific tables/figures from `main.tex` by their labels (e.g., Table~\ref{tab:bootstrap})
+
+# Observation
+
+## Phase 1 Task Completion Evaluation
+
+### Task Requirement Checklist
+
+| Requirement | Status | Notes |
+|---|:---:|---|
+| Overall logical story (总体行文逻辑) | Done | 7-sentence narrative arc covering problem → gap → insight → evidence → implication |
+| Section-by-section outline with bullet points | Done | 8 sections, each with subsection-level bullets |
+| Paragraph roles annotated (opening/challenge/method/evidence/limitation) | Done | All subsections tagged with paragraph roles |
+| Content of each section/part | Done | Detailed content descriptions with quantitative references |
+| `experiments.md` with experiment descriptions | Done | 4 phases, each with purpose/method/results/takeaway |
+| Comparison experiments summary table | Done | 12-row table covering key results across all phases |
+| Ablation studies summary | Done | Category ablation + backward elimination + optimal reduced model |
+| Quantitative results from actual data | Done | All R², RMSE, p-values pulled from CSV files, consistent with `main.tex` |
+
+**Verdict: All instruction requirements met.**
+
+---
+
+### Adversarial Review (research-paper-writing skill — 5-Dimension Self-Review)
+
+#### 1. Contribution Clarity — Pass with notes
+
+**Strength:** The paper story has a clear, non-trivial insight — domain-knowledge features transform OES-based prediction from failure (R² = −0.17) to success (R² = 0.80/0.92). This is a genuinely surprising result, not a predictable incremental gain.
+
+**Risk to address in Phase 2 writing:**
+- The outline currently reads as "incremental patching of a naive baseline" (Phase 1 → Phase 2 → Phase 3 → Phase 4). The Introduction guide explicitly warns: *"Do not first present a naive solution and then describe our improvement over it."* The story should be reframed from "we tried PCA and it failed, so we tried domain features" to "domain knowledge is the decisive factor — here is why and the evidence."
+- **Recommendation:** In Introduction, use **Technical-Challenge Version 2** (existing task + our insight seen in traditional methods) — frame domain-knowledge feature engineering as a classical spectroscopy principle that modern ML approaches have overlooked, not as "our fix after PCA failed."
+
+#### 2. Writing Clarity — Pass with gaps
+
+**Strength:** The outline provides clear paragraph roles and the story flows logically from problem → evidence → conclusion.
+
+**Gaps identified:**
+- **State of the Art (§2.1.3)** in `outline.md` only says "Review 3–5 papers" with no specifics. The `main.tex` also has `\todo{Briefly review 3–5 papers}`. This is the weakest section — without concrete prior work citations, the "gap" claim is unsupported. **Priority for Phase 2: literature review is essential before writing.**
+- **Terminology note:** The outline uses "Config A/B/C" consistently, which is good. But the Conclusion section in `main.tex` switches between "7-feature" and "minimal" model — needs standardization.
+- `references.bib` is almost entirely placeholder (`TODO`). The paper cannot proceed to prose writing without real citations.
+
+#### 3. Experimental Strength — Strong
+
+**Strengths:**
+- The R² improvement from −0.17 → 0.80 (and to 0.92 after reduction) is not marginal — it is a qualitative regime change.
+- Results are consistent across multiple models (Ridge, PLS, MLP all improve with domain features).
+- Permutation test (p < 0.0005) and bootstrap CIs provide rigorous statistical validation.
+- The backward elimination trajectory (R² monotonically increasing as features are removed) is a compelling and unusual result that strengthens the "redundancy" narrative.
+
+**Weakness:**
+- Single dataset from one lab. Acknowledged as limitation but cannot be resolved within this project.
+- XGBoost results are anomalous (identical R² = −0.108 across all configs) — likely a bug or data issue. The outline and experiments.md correctly omit it from later phases, but this should be briefly acknowledged in the report (not silently dropped).
+
+#### 4. Evaluation Completeness — Pass
+
+**Strengths:**
+- Ablation studies are thorough: both category ablation (3 groups) and backward elimination (full 13→0 trajectory).
+- Multiple evaluation dimensions: R², RMSE, MAE, bootstrap CI, permutation test, feature importance consensus, VIF analysis.
+- Claim–Evidence Mapping table (9 claims, 8 supported, 1 explicitly marked as "needs evidence") demonstrates disciplined claim management.
+
+**Minor gap:**
+- `experiments.md` §4.3 mentions the permutation-tested 7-feature model uses 3 ratios, but the backward elimination trajectory shows the optimal point is actually at **1 OES feature** (band_CO2p_398_412, R² = 0.918). The 7-feature model (R² = 0.920) comes from category ablation (3 ratios + 4 discharge). Both are valid "optimal" models from different selection methods — this distinction should be made explicit in the report to avoid reviewer confusion.
+
+#### 5. Method Design Soundness — Pass
+
+**Strengths:**
+- LOOCV is appropriate for n=701 (actually n=number of experimental conditions, which appears small).
+- The four-phase iterative structure is a sound experimental design that progressively isolates variables.
+- Feature selection is grounded in plasma chemistry literature, not arbitrary.
+
+**Risk:**
+- The outline does not explicitly discuss potential **data leakage** or **target leakage** risks. For a BEng report this may not be critical, but for research credibility, a brief statement confirming that LOOCV prevents leakage would strengthen the Methodology section.
+
+---
+
+### Story Coherence Assessment (Introduction Logic Map)
+
+Mapping the outline against the Introduction guide's logic:
+
+| Logic Step | Content in Outline | Completeness |
+|---|---|:---:|
+| L1: What task | H₂O₂ yield prediction from OES | Clear |
+| L2: Target metrics | R², RMSE | Clear |
+| L3: SOTA fails | PCA/PLS on raw spectra → poor performance | Stated but **no concrete citations** |
+| L4: Root technical issue | PCA discards physical meaning of emission lines | Clear |
+| L5: Our solution | Domain-knowledge feature engineering (13 features) | Clear |
+| L6: Why it works | Features grounded in plasma chemistry; ratios/bands are drift-robust | Clear |
+| L7: Additional contributions | Minimal 7-feature model; statistical validation framework | Clear |
+
+**Introduction template recommendation:** Use **Version 3** (general to specific setting) for Part A — start from "plasma diagnostics is important" then narrow to "OES-based H₂O₂ prediction." Combined with **Technical-Challenge Version 2** for Part B — domain knowledge has roots in traditional spectroscopy but modern ML approaches overlook it.
+
+---
+
+### Summary of Identified Risks for Phase 2
+
+| Priority | Risk | Action |
+|:---:|---|---|
+| **High** | No real literature citations (`references.bib` is all TODO) | Complete literature review before writing prose |
+| **High** | Story reads as incremental patching; needs reframing | Restructure Introduction to lead with insight, not with failure |
+| Medium | XGBoost anomaly unexplained | Add brief note in Methodology or Results |
+| Medium | Two "optimal" models (1-feature vs 3-ratio) need disambiguation | Clarify in Phase 4 Results subsection |
+| Low | Data leakage / LOOCV validity not explicitly stated | Add 1–2 sentences in Methodology |
+| Low | Summary in `main.tex` exceeds 200 words | Edit down before submission |
+
+---
+
+### Overall Assessment
+
+Phase 1 deliverables (`outline.md` and `experiments.md`) are **complete and data-grounded**. All quantitative values are verified against the actual experimental CSVs. The claim–evidence mapping is disciplined with 8/9 claims fully supported. The outline provides sufficient structure to proceed to prose writing.
+
+The most critical preparation for Phase 2 is **completing the literature review** and **reframing the Introduction** to avoid the "incremental patching" anti-pattern identified by the research-paper-writing skill. The story should open with the insight (domain knowledge matters) rather than the failure (PCA doesn't work).

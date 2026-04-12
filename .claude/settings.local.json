@@ -9,7 +9,8 @@
       "Bash(xelatex:*)",
       "Bash(biber document:*)",
       "Bash(python3:*)",
-      "Bash(which python3:*)"
+      "Bash(which python3:*)",
+      "Bash(pip3 install:*)"
     ]
   }
 }
