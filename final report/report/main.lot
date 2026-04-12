@@ -1,0 +1,3 @@
+\contentsline {table}{\numberline {1}{\ignorespaces Input feature configurations evaluated across all phases.}}{7}{table.caption.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Bootstrap 95\% confidence intervals for R\textsuperscript {2} (500 resamples, Phase 3 features).}}{10}{table.caption.3}%
+\contentsline {table}{\numberline {3}{\ignorespaces Top-5 consensus feature importance rankings across Ridge, PLS, RF, and MLP models.}}{10}{table.caption.4}%

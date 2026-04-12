@@ -1,0 +1,420 @@
+% ============================================================
+%  Final Year Project Report — ELEC340/440
+%  University of Liverpool
+%  Student: Mingjie Zhu (201850714)
+%  Project: Machine Learning Assisted Real-Time Plasma Diagnosis:
+%           Domain-Knowledge-Driven Feature Engineering Enables
+%           H2O2 Yield Prediction
+%  Supervisor: Prof. Xin Tu  |  Assessor: Dr. Xue Yong
+% ============================================================
+
+\documentclass[12pt, a4paper]{article}
+
+% ---- Packages -----------------------------------------------
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{times}                  % Times New Roman font
+\usepackage{setspace}               % Line spacing
+\usepackage{graphicx}               % Figures
+\usepackage{booktabs}               % Professional tables
+\usepackage{tabularx}               % Auto-width tables
+\usepackage{longtable}              % Multi-page tables
+\usepackage{amsmath, amssymb}       % Maths
+\usepackage{siunitx}                % SI units
+\usepackage{hyperref}               % Hyperlinks / cross-refs
+\usepackage{cite}                   % IEEE-style citation compression
+\usepackage{caption}                % Caption formatting
+\usepackage{subcaption}             % Sub-figures
+\usepackage{float}                  % [H] float placement
+\usepackage{microtype}              % Better typography
+\usepackage{enumitem}               % List customisation
+\usepackage{fancyhdr}               % Header / footer
+\usepackage{titlesec}               % Section heading style
+\usepackage{acronym}                % Abbreviations list
+\usepackage{appendix}               % Appendix formatting
+\usepackage{xcolor}                 % Colour (for TODO notes)
+\usepackage{lipsum}                 % Placeholder text — REMOVE before submission
+
+% ---- Hyperref setup -----------------------------------------
+\hypersetup{
+    colorlinks = true,
+    linkcolor  = black,
+    citecolor  = black,
+    urlcolor   = blue,
+    pdftitle   = {FYP Final Report — Mingjie Zhu},
+    pdfauthor  = {Mingjie Zhu},
+}
+
+% ---- Page style ---------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small ML-Assisted Plasma Diagnosis}
+\lhead{\small Mingjie Zhu — 201850714}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Section heading style ----------------------------------
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% ---- Line spacing -------------------------------------------
+\onehalfspacing
+
+% ---- Caption style ------------------------------------------
+\captionsetup{font=small, labelfont=bf, justification=centering}
+
+% ---- Helper: TODO marker ------------------------------------
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+% ============================================================
+\begin{document}
+
+% ---- Title Page ---------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\LARGE\bfseries Machine Learning Assisted Real-Time Plasma Diagnosis:\\[0.4em]
+    Domain-Knowledge-Driven Feature Engineering\\[0.4em]
+    Enables H\textsubscript{2}O\textsubscript{2} Yield Prediction\par}
+
+    \vspace{2cm}
+
+    {\large Final Year Project Report\\[0.3em]
+    ELEC340 / ELEC440\par}
+
+    \vspace{1.5cm}
+
+    {\large\bfseries Mingjie Zhu\\[0.2em]}
+    {\normalsize Student ID: 201850714\par}
+
+    \vspace{1cm}
+
+    \begin{tabular}{rl}
+        \textbf{Supervisor:} & Prof.\ Xin Tu \\
+        \textbf{Assessor:}   & Dr.\ Xue Yong \\
+    \end{tabular}
+
+    \vspace{1.5cm}
+
+    {\normalsize Department of Electrical Engineering and Electronics\\
+    University of Liverpool\\[0.5em]
+    \today\par}
+
+    \vfill
+
+    \includegraphics[width=0.25\textwidth]{figures/uol_logo.png}   % Replace with actual logo file
+\end{titlepage}
+
+% ---- Acknowledgements (optional, not in word count) ---------
+\newpage
+\section*{Acknowledgements}
+\addcontentsline{toc}{section}{Acknowledgements}
+
+I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance throughout this project. I also thank the research group at Xi'an Jiaotong University (XJTU) for making the plasma discharge dataset publicly available.
+
+% ---- Summary (Executive Summary, ≤200 words) ----------------
+\newpage
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+\todo{Write executive summary — maximum 200 words, text only, no figures. Cover: project goal, methodology, key results, main conclusion.}
+
+% Draft (edit to ≤200 words):
+This report presents a machine learning (ML) pipeline for real-time prediction of hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) yield from nanosecond pulsed CO\textsubscript{2} bubble plasma discharge experiments. The dataset, sourced from Xi'an Jiaotong University, comprises 701 optical emission spectroscopy (OES) samples paired with four discharge parameters. Seven regression models were evaluated across four iterative phases: baseline modelling with PCA-reduced OES features, hyperparameter optimisation using Optuna, domain-knowledge-driven feature engineering, and model interpretability analysis. The central finding is that replacing PCA components with 13 physically motivated OES features — emission line intensities, band integrals, and spectroscopic ratios — increased Ridge regression R\textsuperscript{2} on the combined input configuration from $-0.17$ to $0.80$. Subsequent feature reduction identified a seven-feature Ridge model achieving R\textsuperscript{2}~$= 0.92$, matching the performance of complex neural networks. A permutation test confirmed the result is statistically genuine ($p < 0.00005$). These findings demonstrate that domain knowledge is the decisive factor in OES-based ML, enabling accurate, interpretable, and deployable real-time plasma diagnosis.
+
+% ---- Tables of Contents / Figures / Tables / Abbreviations --
+\newpage
+\tableofcontents
+
+\newpage
+\listoffigures
+
+\listoftables
+
+\newpage
+\section*{List of Abbreviations}
+\addcontentsline{toc}{section}{List of Abbreviations}
+\begin{acronym}
+    \acro{OES}{Optical Emission Spectroscopy}
+    \acro{ML}{Machine Learning}
+    \acro{PCA}{Principal Component Analysis}
+    \acro{LOOCV}{Leave-One-Out Cross-Validation}
+    \acro{Ridge}{Ridge Regression (L2-regularised linear regression)}
+    \acro{PLS}{Partial Least Squares}
+    \acro{SVR}{Support Vector Regression}
+    \acro{RF}{Random Forest}
+    \acro{MLP}{Multi-Layer Perceptron}
+    \acro{CNN}{1D Convolutional Neural Network}
+    \acro{TPE}{Tree-structured Parzen Estimator}
+    \acro{H2O2}{Hydrogen Peroxide}
+    \acro{CO2}{Carbon Dioxide}
+\end{acronym}
+
+% ============================================================
+\newpage
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{Background and Motivation}
+
+Nanosecond pulsed CO\textsubscript{2} bubble plasma discharge is an emerging technique for converting greenhouse gases into value-added chemicals including hydrogen (H\textsubscript{2}) and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2})~\cite{gao2023plasma}. \todo{Add citation for CO2 plasma chemistry.} As global demand for green chemical processes grows, real-time monitoring of product yield becomes a critical bottleneck: conventional H\textsubscript{2}O\textsubscript{2} quantification requires stopping the reaction, sampling, and offline titration — a process that is slow, intrusive, and incompatible with closed-loop control.
+
+Optical Emission Spectroscopy (OES) offers a non-intrusive, in-situ diagnostic window into the plasma. By recording the light emitted by excited species, OES reveals information about plasma composition and energy without disturbing the discharge. However, a single OES measurement comprises 701 wavelength points, making direct application of machine learning (ML) models challenging due to high dimensionality and the risk of spurious correlations.
+
+\subsection{Objectives}
+
+This project addresses three primary objectives:
+\begin{enumerate}[label=\arabic*.]
+    \item Build ML regression models to predict H\textsubscript{2}O\textsubscript{2} yield from OES spectra and discharge parameters.
+    \item Investigate whether domain-knowledge-driven feature engineering outperforms automated dimensionality reduction (PCA).
+    \item Identify the minimal, physically interpretable feature set for a practical real-time predictor.
+\end{enumerate}
+
+\subsection{State of the Art}
+
+\todo{Briefly review 3–5 papers on OES-based ML for plasma diagnostics. Emphasise that prior work uses generic PCA and does not exploit plasma chemistry knowledge.}
+
+Existing ML-based plasma diagnostic studies typically apply PCA or partial least squares directly to raw OES spectra~\cite{example_sota}. While these approaches reduce dimensionality, they discard the physical meaning of individual emission lines, limiting both predictive accuracy and interpretability. This work demonstrates that selecting features grounded in plasma chemistry literature transforms model performance.
+
+% ============================================================
+\newpage
+\section{Procedure / Methodology}
+\label{sec:method}
+
+\subsection{Dataset and Experimental Setup}
+
+The dataset was provided by Gao et al.\ at Xi'an Jiaotong University~\cite{gao2023plasma} and is publicly available. It contains \textbf{701 OES samples} collected during nanosecond pulsed CO\textsubscript{2} bubble discharge experiments. Each sample consists of:
+\begin{itemize}
+    \item A 701-point OES spectrum (wavelength range: \todo{add range} nm).
+    \item Four discharge parameters: CO\textsubscript{2} flow rate (\si{sccm}), pulse frequency (\si{Hz}), pulse width (\si{ns}), and rise time (\si{ns}).
+    \item Measured H\textsubscript{2}O\textsubscript{2} yield as the regression target.
+\end{itemize}
+
+Model performance was evaluated using \textbf{Leave-One-Out Cross-Validation (LOOCV)}, appropriate for the small sample size, with R\textsuperscript{2} and RMSE as primary metrics.
+
+\subsection{Input Configurations}
+
+Three input configurations were defined to isolate the contribution of each data source:
+
+\begin{table}[H]
+    \centering
+    \caption{Input feature configurations evaluated across all phases.}
+    \label{tab:configs}
+    \begin{tabular}{clp{7cm}}
+        \toprule
+        \textbf{Config} & \textbf{Features} & \textbf{Description} \\
+        \midrule
+        A & OES only      & PCA-reduced OES spectrum (11 components, $\geq$95\% variance) \\
+        B & Discharge only & 4 discharge parameters (flow rate, frequency, pulse width, rise time) \\
+        C & OES + Discharge & Combined feature set \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Phase 1 — Baseline Modelling}
+
+Seven regression models were trained on the three input configurations:
+Ridge regression, Partial Least Squares (PLS), Support Vector Regression (SVR), XGBoost, Random Forest (RF), Multi-Layer Perceptron (MLP), and a 1D Convolutional Neural Network (CNN).
+OES features were reduced from 701 to 11 principal components using PCA prior to training.
+
+\subsection{Phase 2 — Hyperparameter Optimisation}
+
+Non-linear models (RF, MLP, CNN) were tuned using \textbf{Optuna}~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator (TPE) sampler. More than 100 trials were conducted per model–configuration pair to establish an upper-bound performance ceiling before feature engineering.
+
+\subsection{Phase 3 — Domain-Knowledge Feature Engineering}
+
+Rather than relying on PCA to select OES information automatically, 13 physically meaningful OES features were manually derived from plasma chemistry literature:
+
+\begin{itemize}
+    \item \textbf{Emission line intensities:} OH (309\,nm), O (777\,nm), H$_\beta$ (486\,nm), H$_\alpha$ (656\,nm), N\textsubscript{2} (337\,nm), CO\textsubscript{2}\textsuperscript{+} (406\,nm), C\textsubscript{2} (516\,nm) — each representing species directly relevant to plasma chemistry and H\textsubscript{2}O\textsubscript{2} formation pathways.
+    \item \textbf{Band integrals:} OH band (306–312\,nm), CO\textsubscript{2}\textsuperscript{+} band (398–412\,nm), CO/H$_\beta$ band (460–500\,nm) — integral over a spectral band is robust to instrument drift and wavelength calibration shifts.
+    \item \textbf{Spectroscopic ratios:} OH/H$_\alpha$ (309/656\,nm), H$_\alpha$/H$_\beta$ (656/486\,nm), O/OH (777/309\,nm) — commonly used in plasma diagnostics literature to characterise relative species populations~\cite{todo_oes_ref}.
+\end{itemize}
+
+Combined with 4 discharge parameters, Config C comprised \textbf{17 features} in this phase.
+
+\subsection{Phase 4 — Interpretability and Feature Reduction}
+
+Feature importance was quantified using model-specific methods:
+Ridge/PLS — absolute standardised regression coefficients;
+RF — permutation importance;
+MLP — gradient-based attribution.
+
+\textbf{Statistical validation:}
+\begin{itemize}
+    \item Bootstrap resampling (500 iterations) provided 95\% confidence intervals for R\textsuperscript{2}.
+    \item A permutation test (1000 label shuffles) confirmed that predictions are not due to chance.
+\end{itemize}
+
+\textbf{Feature reduction} was performed via backward elimination and category ablation (removing entire feature categories — emission lines, band integrals, or ratios — one group at a time) to identify the minimal high-performing feature set.
+
+% ============================================================
+\newpage
+\section{Findings / Results}
+\label{sec:results}
+
+\subsection{Phase 1 \& 2 — Baseline and Tuned Performance}
+
+\todo{Insert R² comparison table/figure for Phase 1 and Phase 2 results.}
+
+Config~B (discharge parameters only) achieved R\textsuperscript{2}~$\approx 0.90$ with linear models, establishing a strong baseline. Config~C (OES + discharge via PCA) performed substantially worse: Ridge Config~C yielded R\textsuperscript{2}~$= -0.17$, and MLP Config~C yielded R\textsuperscript{2}~$= -1.13$ before tuning. After Optuna tuning, MLP Config~C improved to R\textsuperscript{2}~$= 0.33$, with CNN Config~C as the best-performing OES model, though still well below Config~B. This confirmed that PCA-based OES features are insufficient.
+
+\subsection{Phase 3 — Domain-Knowledge Breakthrough}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/r2_comparison.png}  % replace with actual figure
+    \caption{R\textsuperscript{2} scores across Phases 1–3 for all models and input configurations. Phase 3 domain-knowledge features produced a dramatic improvement in Config~C performance.}
+    \label{fig:r2_comparison}
+\end{figure}
+
+Replacing PCA components with 13 domain-knowledge features produced a step-change in performance. Ridge Config~C R\textsuperscript{2} increased from $-0.17$ to $\mathbf{0.80}$; MLP Config~C improved from $0.33$ to $0.80$. The gap between Config~B and Config~C was substantially reduced across all models, demonstrating that OES data, when properly encoded, carries significant predictive information.
+
+\subsection{Phase 4 — Interpretability and Minimal Model}
+
+\begin{table}[H]
+    \centering
+    \caption{Bootstrap 95\% confidence intervals for R\textsuperscript{2} (500 resamples, Phase 3 features).}
+    \label{tab:bootstrap}
+    \begin{tabular}{llccc}
+        \toprule
+        \textbf{Model} & \textbf{Config} & \textbf{R\textsuperscript{2}} & \textbf{95\% CI} & \textbf{RMSE} \\
+        \midrule
+        Ridge & B & 0.904 & [0.800, 0.955] & 0.071 \\
+        Ridge & C & 0.798 & [0.574, 0.910] & 0.104 \\
+        PLS   & B & 0.898 & [0.771, 0.959] & 0.074 \\
+        PLS   & C & 0.744 & [0.466, 0.884] & 0.117 \\
+        RF    & B & 0.748 & [0.485, 0.876] & 0.116 \\
+        RF    & C & 0.497 & [-0.119, 0.768] & 0.164 \\
+        MLP   & B & 0.857 & [0.767, 0.923] & 0.087 \\
+        MLP   & C & 0.815 & [0.647, 0.883] & 0.099 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The consensus feature importance ranking (Table~\ref{tab:feature_importance}) identified CO\textsubscript{2} flow rate and the CO\textsubscript{2}\textsuperscript{+} band integral (398–412\,nm) as the two most influential predictors across all models — physically consistent with CO\textsubscript{2} being the primary reactant.
+
+\begin{table}[H]
+    \centering
+    \caption{Top-5 consensus feature importance rankings across Ridge, PLS, RF, and MLP models.}
+    \label{tab:feature_importance}
+    \begin{tabular}{clcc}
+        \toprule
+        \textbf{Rank} & \textbf{Feature} & \textbf{Type} & \textbf{Mean Rank} \\
+        \midrule
+        1 & \texttt{flow\_rate\_sccm}      & Discharge & 1.75 \\
+        2 & \texttt{band\_CO2p\_398\_412}  & OES band  & 4.75 \\
+        3 & \texttt{pulse\_width\_ns}      & Discharge & 5.25 \\
+        4 & \texttt{I\_486\_Hb}            & OES line  & 6.00 \\
+        4 & \texttt{band\_CO\_Hb\_460\_500}& OES band  & 6.00 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The permutation test yielded $p < 0.00005$, confirming the model captures a genuine input–output relationship rather than overfitting. Bootstrap confidence intervals for Ridge Config~B and Ridge Config~C overlap substantially, indicating no statistically significant performance difference between them.
+
+Category ablation and backward elimination converged on a \textbf{minimal 7-feature Ridge model} (3 OES ratio features + 4 discharge parameters) achieving R\textsuperscript{2}~$= \mathbf{0.920}$. This simple linear model matches the performance of MLP and CNN with far fewer parameters and negligible inference time.
+
+% ============================================================
+\newpage
+\section{Conclusions}
+\label{sec:conclusions}
+
+This project demonstrated that machine learning can accurately predict H\textsubscript{2}O\textsubscript{2} yield from plasma OES data, provided that features are grounded in domain knowledge.
+
+\begin{itemize}
+    \item \textbf{Objective 1 met:} The best model achieved R\textsuperscript{2}~$= 0.92$, enabling practical real-time yield prediction from non-intrusive OES measurements.
+    \item \textbf{Objective 2 met:} Domain-knowledge features decisively outperformed PCA (Ridge Config~C: $-0.17 \to 0.80$). This is the central novel finding of the project.
+    \item \textbf{Objective 3 met:} A 7-feature Ridge regression model matched complex neural networks, demonstrating that interpretable, deployable models are achievable without sacrificing accuracy.
+\end{itemize}
+
+The broader implication is that for physically structured scientific datasets — particularly small datasets where PCA may not capture task-relevant variance — domain-knowledge-driven feature engineering is more effective than automated dimensionality reduction. A simple linear model with well-chosen features can be competitive with deep learning.
+
+\textbf{Limitations:} The dataset originates from a single laboratory configuration; generalisation to other plasma reactor geometries and operating regimes remains unvalidated. The sample size (701) limits the power of non-linear models.
+
+% ============================================================
+\newpage
+\section{Recommendations / Future Work}
+\label{sec:future}
+
+\begin{enumerate}
+    \item \textbf{Generalisation testing:} Apply the domain-knowledge feature engineering framework to OES datasets from different plasma reactor types (e.g., DBD, microwave) to assess transferability of the selected emission lines and ratios.
+
+    \item \textbf{Real-time deployment:} Integrate the 7-feature Ridge model with live OES hardware to enable closed-loop discharge control. Evaluate prediction latency, calibration stability, and robustness to instrument drift.
+
+    \item \textbf{Extended datasets:} Collect additional samples across wider operating parameter ranges to investigate whether non-linear models (MLP, RF) offer advantages over linear models at larger data scales.
+
+    \item \textbf{Physics-informed modelling:} For multi-product plasma systems, incorporate conservation constraints (e.g., mass balance) into multi-output regression models to improve physical consistency.
+
+    \item \textbf{Transfer learning:} Leverage models trained on this dataset to initialise predictors for related plasma reactions (ozone generation, N\textsubscript{2}O conversion), reducing the data requirements for new systems.
+\end{enumerate}
+
+% ============================================================
+\newpage
+\section{Reflection}
+\label{sec:reflection}
+
+\todo{Write personal reflection — approximately 200 words.}
+
+This project required bridging two disciplines: machine learning and plasma physics. At the outset, my background was in ML fundamentals, with limited exposure to spectroscopy or plasma chemistry. The most challenging phase was Phase~3, which required reading plasma diagnostics literature to understand which OES emission lines correspond to specific chemical species and why they are relevant to H\textsubscript{2}O\textsubscript{2} formation. This cross-disciplinary skill — translating physical knowledge into engineered features — proved to be the decisive factor in the project's success and is directly transferable to applied engineering roles in process monitoring and industrial AI.
+
+Technically, I developed proficiency in: building end-to-end ML pipelines in Python, Bayesian hyperparameter optimisation with Optuna, rigorous statistical validation (bootstrap, permutation testing), and scientific communication through the bench inspection poster. The iterative four-phase structure taught me to validate assumptions systematically before advancing to the next stage — a discipline that mirrors professional engineering practice.
+
+Comparing with my original skills audit, I entered the project with strong Python skills but limited knowledge of statistical model validation and plasma diagnostics. I leave it with a clearer understanding of how domain expertise shapes data science outcomes, and with greater confidence in independent research planning.
+
+% ============================================================
+% References
+% ============================================================
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% If not using BibTeX, use thebibliography environment:
+% \begin{thebibliography}{99}
+%   \bibitem{gao2023plasma} \todo{Full IEEE citation for Gao et al. XJTU dataset paper.}
+%   \bibitem{optuna2019} T. Akiba et al., ``Optuna: A Next-generation Hyperparameter Optimization Framework,'' in \textit{Proc. 25th ACM SIGKDD Int. Conf. Knowledge Discovery \& Data Mining}, 2019, pp. 2623--2631.
+%   \bibitem{example_sota} \todo{Add state-of-the-art OES + ML paper citation.}
+% \end{thebibliography}
+
+% ============================================================
+% Appendices
+% ============================================================
+\newpage
+\begin{appendices}
+
+\section{Source Code}
+\label{app:code}
+
+The full Python source code for the ML pipeline (Phases 1--4) is available at: \todo{Add GitHub/repository URL or include code listing here.}
+
+Key modules:
+\begin{itemize}
+    \item \texttt{phase1/} — Baseline modelling with PCA features
+    \item \texttt{phase2/} — Optuna hyperparameter tuning
+    \item \texttt{phase3/} — Domain-knowledge feature engineering
+    \item \texttt{phase4/} — Interpretability, bootstrap, and permutation analysis
+\end{itemize}
+
+\section{Dataset Description}
+\label{app:dataset}
+
+\todo{Describe dataset source, access method, preprocessing steps, and any data cleaning decisions.}
+
+\section{OES Feature Derivation}
+\label{app:oes_features}
+
+\todo{Table listing all 13 OES features: emission line / band / ratio, wavelength(s), corresponding plasma species, and literature reference justifying inclusion.}
+
+\section{Optuna Hyperparameter Search Results}
+\label{app:optuna}
+
+\todo{Include best hyperparameter sets found for RF, MLP, and CNN across all configurations. Include convergence plots if available.}
+
+\section{Full Statistical Test Outputs}
+\label{app:stats}
+
+\todo{Include bootstrap distribution plots, permutation test histogram, and full feature ablation R² table.}
+
+\end{appendices}
+
+\end{document}
