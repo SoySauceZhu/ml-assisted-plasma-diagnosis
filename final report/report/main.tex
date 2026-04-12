@@ -157,13 +157,13 @@ This report presents a machine learning (ML) pipeline for real-time prediction o
 
 \subsection{Background and Motivation}
 
-Nanosecond pulsed CO\textsubscript{2} bubble plasma discharge is an emerging technique for converting greenhouse gases into value-added chemicals including hydrogen (H\textsubscript{2}) and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2})~\cite{Gao2024NSCO2Discharge}. \todo{Add citation for CO2 plasma chemistry.} As global demand for green chemical processes grows, real-time monitoring of product yield becomes a critical bottleneck: conventional H\textsubscript{2}O\textsubscript{2} quantification requires stopping the reaction, sampling, and offline titration — a process that is slow, intrusive, and incompatible with closed-loop control.
+Plasma-based green chemistry has emerged as a promising route for converting greenhouse gases into value-added chemicals. Nanosecond pulsed CO\textsubscript{2} bubble discharge enables efficient synthesis of hydrogen and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) from CO\textsubscript{2} and water~\cite{Gao2024NSCO2Discharge, Shao2018PulsedDischarges}. As these processes advance toward industrial deployment, real-time monitoring of product yield becomes essential for closed-loop control. However, conventional H\textsubscript{2}O\textsubscript{2} quantification relies on offline titration --- a procedure that is slow, intrusive, and incompatible with real-time feedback.
 
-Optical Emission Spectroscopy (OES) offers a non-intrusive, in-situ diagnostic window into the plasma. By recording the light emitted by excited species, OES reveals information about plasma composition and energy without disturbing the discharge. However, a single OES measurement comprises 701 wavelength points, making direct application of machine learning (ML) models challenging due to high dimensionality and the risk of spurious correlations.
+Optical Emission Spectroscopy (OES) provides a non-intrusive, in-situ diagnostic window into the plasma by recording light emitted by excited species~\cite{Laux2003OESAir}. Traditional OES analysis employs spectroscopic techniques such as Boltzmann plots and line-ratio methods, which require physical model assumptions and expert interpretation~\cite{Laux2003OESAir, Srikar2024Accelerated}. Machine learning (ML) offers a data-driven alternative capable of automating OES-based diagnostics for real-time applications~\cite{Gidon2019MLCAP}. However, a single OES measurement in this study comprises 701 wavelength points, creating a high-dimensional input that poses challenges for ML, particularly on small datasets where spurious correlations are likely.
 
 \subsection{Objectives}
 
-This project addresses three primary objectives:
+This project addresses three objectives:
 \begin{enumerate}[label=\arabic*.]
     \item Build ML regression models to predict H\textsubscript{2}O\textsubscript{2} yield from OES spectra and discharge parameters.
     \item Investigate whether domain-knowledge-driven feature engineering outperforms automated dimensionality reduction (PCA).
@@ -172,81 +172,96 @@ This project addresses three primary objectives:
 
 \subsection{State of the Art}
 
-\todo{Briefly review 3–5 papers on OES-based ML for plasma diagnostics. Emphasise that prior work uses generic PCA and does not exploit plasma chemistry knowledge.}
+Recent studies have applied ML to automate OES-based plasma diagnostics. Srikar et al.~\cite{Srikar2025MLOES} combined PCA with random forest and deep neural networks for OES prediction in argon multi-jet plasma. Stefas et al.~\cite{Stefas2025MLSDBD} applied PCA with multilayer perceptrons to diagnose surface dielectric barrier discharges. Wang and Hsu~\cite{Wang2019MLOESAqueous} employed PCA followed by deep artificial neural networks for plasma-in-liquid OES analysis, finding that PCA alone was insufficient and that deep architectures were necessary. Park et al.~\cite{Park2021MLOESNitrogen} developed ML virtual metrology for electron density and temperature estimation from OES. A common thread across these studies is the reliance on PCA or partial least squares for dimensionality reduction of raw OES spectra prior to modelling.
 
-Existing ML-based plasma diagnostic studies typically apply PCA or partial least squares directly to raw OES spectra~\cite{Srikar2025MLOES}. While these approaches reduce dimensionality, they discard the physical meaning of individual emission lines, limiting both predictive accuracy and interpretability. This work demonstrates that selecting features grounded in plasma chemistry literature transforms model performance.
+PCA-based feature extraction, however, has fundamental limitations: it selects directions of maximum spectral variance, which need not correlate with the prediction target --- particularly on small datasets where PCA cannot discover task-relevant structure. Moreover, PCA discards the physical identity of individual emission lines, limiting interpretability and robustness to instrument drift. In contrast, Wang et al.~\cite{Wang2025MLOESCascaded} recently demonstrated that ML models trained on physically motivated line intensity ratios achieve $R^2 \approx 0.90$--$0.97$ for electron density and temperature prediction in cascaded arc plasma, validating the diagnostic power of domain-knowledge features. However, this approach has not been applied to chemical yield prediction.
+
+Traditional spectroscopy has long recognised the value of line intensity ratios and band integrals for robust plasma diagnostics --- for example, nitrogen band ratios for electric field measurement~\cite{Paris2005N2Ratio} and OES techniques for atmospheric pressure plasmas~\cite{Laux2003OESAir}. This domain knowledge exists but is systematically overlooked in modern OES+ML pipelines. Meanwhile, ML studies in plasma catalysis have demonstrated that physically meaningful input features improve process prediction~\cite{Cai2024MLDRM, Wang2021PlasmaTarML}, and similar findings hold for biomass pyrolysis~\cite{Dong2023MLBiomass}. No prior work, however, has systematically compared PCA-based and domain-knowledge-based OES feature engineering for plasma product yield prediction. This project bridges that gap: it demonstrates that encoding traditional spectroscopic knowledge --- emission line intensities, band integrals, and spectroscopic ratios --- as ML features is the decisive factor for accurate OES-based H\textsubscript{2}O\textsubscript{2} yield prediction, outperforming both automated dimensionality reduction and model complexity.
 
 % ============================================================
 \newpage
 \section{Procedure / Methodology}
 \label{sec:method}
 
-\subsection{Dataset and Experimental Setup}
+The experimental pipeline predicts H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters using ML regression. It comprises four phases, each testing a specific hypothesis: (1)~whether standard PCA-based OES features carry predictive information, (2)~whether hyperparameter tuning compensates for feature quality, (3)~whether domain-knowledge features outperform automated feature extraction, and (4)~which features are essential and which are redundant. The following subsections detail the dataset, evaluation protocol, and each experimental phase.
 
-The dataset was provided by Gao et al.\ at Xi'an Jiaotong University~\cite{Gao2024NSCO2Discharge} and is publicly available. It contains \textbf{701 OES samples} collected during nanosecond pulsed CO\textsubscript{2} bubble discharge experiments. Each sample consists of:
-\begin{itemize}
-    \item A 701-point OES spectrum (wavelength range: \todo{add range} nm).
-    \item Four discharge parameters: CO\textsubscript{2} flow rate (\si{sccm}), pulse frequency (\si{Hz}), pulse width (\si{ns}), and rise time (\si{ns}).
-    \item Measured H\textsubscript{2}O\textsubscript{2} yield as the regression target.
-\end{itemize}
+\subsection{Dataset and Evaluation Protocol}
+\label{sec:dataset}
 
-Model performance was evaluated using \textbf{Leave-One-Out Cross-Validation (LOOCV)}, appropriate for the small sample size, with R\textsuperscript{2} and RMSE as primary metrics.
+The dataset was provided by Gao et al.~\cite{Gao2024NSCO2Discharge} and originates from nanosecond pulsed CO\textsubscript{2} bubble discharge experiments conducted at Xi'an Jiaotong University. It contains 20~samples, each comprising a 701-point OES spectrum, four discharge parameters (CO\textsubscript{2} flow rate, pulse frequency, pulse width, and rise time), and a measured H\textsubscript{2}O\textsubscript{2} yield serving as the regression target.
+
+Model performance was evaluated using Leave-One-Out Cross-Validation (LOOCV), which is appropriate for this small dataset: each of the 20~samples is held out exactly once as the test set while the remaining 19 are used for training. LOOCV maximises training data per fold, eliminates random fold-split variability, and produces an unbiased performance estimate with no data leakage. The coefficient of determination ($R^2$) and root mean square error (RMSE) served as primary metrics.
 
 \subsection{Input Configurations}
 
-Three input configurations were defined to isolate the contribution of each data source:
+Three input configurations were defined as a controlled-variable design to isolate the contribution of each data source (Table~\ref{tab:configs}). Config~B (discharge parameters only) serves as a strong baseline: any OES-inclusive configuration must outperform Config~B to justify the additional complexity of OES feature processing. This three-way comparison prevents a common pitfall in ML studies --- claiming that a model ``works'' without testing whether simpler inputs achieve the same result.
 
 \begin{table}[H]
     \centering
-    \caption{Input feature configurations evaluated across all phases.}
+    \caption{Input feature configurations. In Phases~1--2, Config~A uses 11 PCA components; in Phase~3 onward, Config~A uses 13 domain-knowledge features.}
     \label{tab:configs}
-    \begin{tabular}{clp{7cm}}
+    \begin{tabular}{clp{6.5cm}}
         \toprule
         \textbf{Config} & \textbf{Features} & \textbf{Description} \\
         \midrule
-        A & OES only      & PCA-reduced OES spectrum (11 components, $\geq$95\% variance) \\
-        B & Discharge only & 4 discharge parameters (flow rate, frequency, pulse width, rise time) \\
-        C & OES + Discharge & Combined feature set \\
+        A & OES only & Phase~1--2: 11 PCA components ($\geq$95\% variance); Phase~3+: 13 domain-knowledge features \\
+        B & Discharge only & 4 parameters (flow rate, frequency, pulse width, rise time) \\
+        C & OES + Discharge & Combined (Phase~1--2: 15 features; Phase~3+: 17 features) \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-\subsection{Phase 1 — Baseline Modelling}
+\subsection{Phase 1 --- Baseline Modelling}
 
-Seven regression models were trained on the three input configurations:
-Ridge regression, Partial Least Squares (PLS), Support Vector Regression (SVR), XGBoost, Random Forest (RF), Multi-Layer Perceptron (MLP), and a 1D Convolutional Neural Network (CNN).
-OES features were reduced from 701 to 11 principal components using PCA prior to training.
+Seven regression models were selected to span three categories of inductive bias, ensuring that performance differences reflect feature quality rather than model-specific limitations: linear models (Ridge regression, Partial Least Squares) that test whether the feature--target relationship is approximately linear; kernel and ensemble methods (Support Vector Regression, Random Forest) that capture non-linear interactions; and deep learning models (Multi-Layer Perceptron, 1D~Convolutional Neural Network) that can learn hierarchical representations. OES spectra were reduced from 701 wavelengths to 11 principal components ($\geq$95\% variance explained) via PCA before training. XGBoost was also evaluated but produced anomalous identical results across all configurations, likely due to default hyperparameters being unsuitable for the small dataset; it was excluded from subsequent phases.
 
-\subsection{Phase 2 — Hyperparameter Optimisation}
+\subsection{Phase 2 --- Hyperparameter Optimisation}
 
-Non-linear models (RF, MLP, CNN) were tuned using \textbf{Optuna}~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator (TPE) sampler. More than 100 trials were conducted per model–configuration pair to establish an upper-bound performance ceiling before feature engineering.
+Non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Over 100 trials were conducted per model--configuration pair. Linear models (Ridge, PLS) were not tuned as their regularisation parameters have minimal impact at this scale. The purpose of this phase was strategic: by establishing an upper-bound performance ceiling with tuned models \emph{before} feature engineering, it tests whether model complexity alone can compensate for uninformative PCA features.
 
-\subsection{Phase 3 — Domain-Knowledge Feature Engineering}
+\subsection{Phase 3 --- Domain-Knowledge Feature Engineering}
 
-Rather than relying on PCA to select OES information automatically, 13 physically meaningful OES features were manually derived from plasma chemistry literature:
+The preceding phases relied on PCA for OES dimensionality reduction. PCA selects directions of maximum spectral variance, but these directions need not align with the prediction target, especially when the dataset is small and the relevant signal is distributed across specific emission lines rather than broad spectral patterns. Traditional plasma diagnostics has long used physically motivated spectral features for robust analysis: line intensity ratios for electron temperature estimation~\cite{Laux2003OESAir}, band-head intensities for species identification~\cite{Paris2005N2Ratio}, and spectroscopic ratios for electric field measurement. Wang et al.~\cite{Wang2025MLOESCascaded} recently validated this approach for ML, achieving strong predictive performance using line intensity ratios. This project extends the principle to chemical yield prediction.
 
-\begin{itemize}
-    \item \textbf{Emission line intensities:} OH (309\,nm), O (777\,nm), H$_\beta$ (486\,nm), H$_\alpha$ (656\,nm), N\textsubscript{2} (337\,nm), CO\textsubscript{2}\textsuperscript{+} (406\,nm), C\textsubscript{2} (516\,nm) — each representing species directly relevant to plasma chemistry and H\textsubscript{2}O\textsubscript{2} formation pathways.
-    \item \textbf{Band integrals:} OH band (306–312\,nm), CO\textsubscript{2}\textsuperscript{+} band (398–412\,nm), CO/H$_\beta$ band (460–500\,nm) — integral over a spectral band is robust to instrument drift and wavelength calibration shifts.
-    \item \textbf{Spectroscopic ratios:} OH/H$_\alpha$ (309/656\,nm), H$_\alpha$/H$_\beta$ (656/486\,nm), O/OH (777/309\,nm) — commonly used in plasma diagnostics literature to characterise relative species populations~\cite{Laux2003OESAir}.
-\end{itemize}
+Thirteen physically motivated OES features were derived to replace the 11 PCA components (Table~\ref{tab:oes_features}): seven emission line intensities, each corresponding to a plasma species relevant to H\textsubscript{2}O\textsubscript{2} formation pathways; three band integrals that capture broadband emission and are robust to spectral noise; and three spectroscopic ratios that encode relative species populations. Combined with the four discharge parameters, Config~C comprised 17~features in this phase.
 
-Combined with 4 discharge parameters, Config C comprised \textbf{17 features} in this phase.
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Thirteen domain-knowledge OES features with corresponding plasma species and physical significance. A detailed derivation is provided in Appendix~\ref{app:oes_features}.}
+    \label{tab:oes_features}
+    \begin{tabular}{llcll}
+        \toprule
+        \textbf{Feature} & \textbf{Type} & \textbf{$\lambda$ (nm)} & \textbf{Species} & \textbf{Significance} \\
+        \midrule
+        I\textsubscript{OH}        & Line  & 309     & OH (A--X)            & H\textsubscript{2}O\textsubscript{2} precursor (OH+OH$\to$H\textsubscript{2}O\textsubscript{2}) \\
+        I\textsubscript{O}         & Line  & 777     & Atomic O             & CO\textsubscript{2} dissociation; OH source \\
+        I\textsubscript{H$\beta$}  & Line  & 486     & H (Balmer-$\beta$)   & H\textsubscript{2}O dissociation marker \\
+        I\textsubscript{H$\alpha$} & Line  & 656     & H (Balmer-$\alpha$)  & H\textsubscript{2}O dissociation degree \\
+        I\textsubscript{N$_2$}     & Line  & 337     & N\textsubscript{2} (SPS)  & High-energy electron marker \\
+        I\textsubscript{CO$_2^+$}  & Line  & 406     & CO\textsubscript{2}\textsuperscript{+} (FDB)  & CO\textsubscript{2} ionisation degree \\
+        I\textsubscript{C$_2$}     & Line  & 516     & C\textsubscript{2} (Swan) & Deep dissociation indicator \\
+        \midrule
+        $\int$OH                   & Band  & 306--312 & OH (A--X) band      & Noise-robust total OH emission \\
+        $\int$CO$_2^+$             & Band  & 398--412 & CO\textsubscript{2}\textsuperscript{+} band & Reactant consumption marker \\
+        $\int$CO/H$\beta$          & Band  & 460--500 & CO + H$\beta$       & Product formation region \\
+        \midrule
+        OH/H$\alpha$               & Ratio & 309/656  & OH vs.\ H           & H abstraction pathway balance \\
+        H$\alpha$/H$\beta$         & Ratio & 656/486  & Balmer decrement    & Electron temperature diagnostic~\cite{Laux2003OESAir} \\
+        O/OH                       & Ratio & 777/309  & O vs.\ OH           & Oxidation pathway balance \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\subsection{Phase 4 — Interpretability and Feature Reduction}
+These domain-knowledge features offer three technical advantages over PCA components. First, spectroscopic ratios are inherently drift-invariant: numerator and denominator are affected equally by instrument gain variations, eliminating a noise source that degrades PCA components trained on absolute spectral profiles. Second, every feature maps to a known plasma species or reaction pathway, enabling physically meaningful model interpretation. Third, the reduction from 701 wavelengths to 13 features dramatically lowers dimensionality, reducing overfitting risk on this 20-sample dataset.
 
-Feature importance was quantified using model-specific methods:
-Ridge/PLS — absolute standardised regression coefficients;
-RF — permutation importance;
-MLP — gradient-based attribution.
+\subsection{Phase 4 --- Interpretability and Feature Reduction}
 
-\textbf{Statistical validation:}
-\begin{itemize}
-    \item Bootstrap resampling (500 iterations) provided 95\% confidence intervals for R\textsuperscript{2}.
-    \item A permutation test (1000 label shuffles) confirmed that predictions are not due to chance.
-\end{itemize}
+Feature importance was quantified using four model-specific methods to obtain a consensus ranking: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. Averaging ranks across methods reduces method-specific artifacts, since no single importance technique is unbiased.
 
-\textbf{Feature reduction} was performed via backward elimination and category ablation (removing entire feature categories — emission lines, band integrals, or ratios — one group at a time) to identify the minimal high-performing feature set.
+Statistical validation comprised two complementary tests. Bootstrap resampling (500 iterations) provided 95\% confidence intervals for $R^2$ and RMSE, quantifying prediction uncertainty without distributional assumptions. A permutation test (2000 label shuffles) assessed statistical significance: if the observed $R^2$ exceeds all null-distribution values, the prediction is genuine rather than an artifact of overfitting.
+
+Feature reduction was performed via two complementary strategies. Backward elimination iteratively removed the least important OES feature (retaining all four discharge parameters) to find the optimal feature subset at each cardinality. Category ablation removed entire OES feature types --- emission lines, band integrals, or spectroscopic ratios --- one at a time to identify which feature category contributes most. Together, these analyses identify both the optimal individual features and the most informative feature type.
 
 % ============================================================
 \newpage
@@ -330,7 +345,7 @@ This project demonstrated that machine learning can accurately predict H\textsub
 
 The broader implication is that for physically structured scientific datasets — particularly small datasets where PCA may not capture task-relevant variance — domain-knowledge-driven feature engineering is more effective than automated dimensionality reduction. A simple linear model with well-chosen features can be competitive with deep learning.
 
-\textbf{Limitations:} The dataset originates from a single laboratory configuration; generalisation to other plasma reactor geometries and operating regimes remains unvalidated. The sample size (701) limits the power of non-linear models.
+\textbf{Limitations:} The dataset originates from a single laboratory configuration; generalisation to other plasma reactor geometries and operating regimes remains unvalidated. The small sample size (20) limits the power of non-linear models.
 
 % ============================================================
 \newpage

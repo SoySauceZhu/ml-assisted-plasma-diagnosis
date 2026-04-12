@@ -10,7 +10,12 @@
       "Bash(biber document:*)",
       "Bash(python3:*)",
       "Bash(which python3:*)",
-      "Bash(pip3 install:*)"
+      "Bash(pip3 install:*)",
+      "Bash(awk -F',' '$1==\"Ridge\" && $2==\"A\" {print $3}' \"/Users/mingjie.zhu22/SynologyDrive/0.2025_Year4/FYP/code2.0/phase1/results/tables/loocv_predictions_detail.csv\")",
+      "Bash(pdflatex -interaction=nonstopmode main.tex)",
+      "Bash(bibtex main:*)",
+      "Bash(awk '/\\\\\\\\section\\\\{Introduction\\\\}/,/\\\\\\\\section\\\\{Procedure/' main.tex)",
+      "Bash(awk '/\\\\\\\\section\\\\{Procedure/,/\\\\\\\\section\\\\{Findings/' main.tex)"
     ]
   }
 }
