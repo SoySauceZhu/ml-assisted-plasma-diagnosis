@@ -1,6 +1,6 @@
-# Final Report Outline (Phase 5 — Updated)
+# Final Report Outline (Phase 3 — Updated)
 
-> Updated from Phase 3 outline. Changes: §2.3 Findings/Results substantially expanded with claim–evidence pairing, paragraph-role annotations, a new §2.3.4 Synthesis paragraph, fact-checked evidence anchors for every claim, and reconciled figure/table labels. See `results_flow.md` for the full writing logic flow.
+> Updated from Phase 2 outline. Changes: §2.2 Methodology substantially expanded with justification notes, paragraph-role annotations, and expanded §2.2.5 (domain features). See `methodology_flow.md` for the full writing logic flow.
 
 ## 1. Overall Story (总体行文逻辑)
 
@@ -193,98 +193,34 @@ Nanosecond pulsed CO₂ bubble plasma discharge is a promising green chemistry t
 
 ### 2.3 Findings / Results (`\label{sec:results}`)
 
-> **Phase 5 results writing principle (from `results_flow.md`):** Frame §2.3 as a claim-driven narrative, not a phase-by-phase diary. Each subsection opens with a **[Claim]** and follows with **[Evidence]** anchored to a specific CSV row. Interpretation of *why* results occur belongs in §2.4 Conclusions. Every headline R² must be paired with a statistical qualifier (bootstrap CI or permutation p-value).
+#### 2.3.1 Phase 1 & 2 — Baseline and Tuned Performance
+- **[Evidence]** Config B (discharge only) establishes strong baseline: Ridge R² = 0.904, PLS R² = 0.898
+- **[Challenge]** Config C (OES+discharge via PCA) fails: Ridge R² = −0.17, MLP R² = −1.13
+- **[Evidence]** After Optuna tuning: MLP Config C improves −1.13 → 0.37; CNN Config C = 0.77 (best OES model), but still below Config B
+- **[Takeaway]** PCA-based OES features are insufficient; tuning alone cannot fix bad features
 
-#### 2.3.0 Opening (~1 paragraph)
+#### 2.3.2 Phase 3 — Domain-Knowledge Breakthrough
+- **[Evidence]** Domain features produce step-change: Ridge Config C R² from −0.17 → 0.80; MLP Config C from 0.37 → 0.82
+- **[Advantage]** Gap between Config B and Config C substantially reduced across all models
+- **Figure:** `fig:r2_comparison` — R² scores across Phases 1–3
 
-- **[Role: Opening]** One-paragraph orientation: LOOCV protocol, R² / RMSE as primary metrics, 20-sample dataset, three claims that structure the section (baseline paradox → domain-feature step-change → minimal-model validation)
-- **[Role: Transition]** Forward-points to §2.3.1 / §2.3.2 / §2.3.3 and to the synthesis in §2.3.4
+#### 2.3.3 Phase 4 — Interpretability and Minimal Model
+- **[Evidence]** Consensus feature importance: flow_rate_sccm (rank 1), band_CO2p_398_412 (rank 2), pulse_width_ns (rank 3)
+- **[Evidence]** Bootstrap 95% CI: Ridge B [0.800, 0.955], Ridge C [0.574, 0.910] — overlapping, no significant difference
+- **[Evidence]** Permutation test: observed R² = 0.920, p < 0.0005 (2000 permutations)
+- **[Evidence]** Category ablation: ratios (3 features) → R² = 0.906; band integrals (3) → R² = 0.905; single-wavelength (7) → R² = 0.823
+- **[Evidence]** Backward elimination: R² increases monotonically as redundant features are removed (0.798 → 0.918 at 1 OES feature)
 
-#### 2.3.1 Phase 1 & 2 — The Baseline Paradox (~2 paragraphs)
+**Feature reduction — two optimal models (disambiguated):**
+- **Category ablation optimal:** 3 OES ratios + 4 discharge = 7 features → R² = 0.920 (permutation-tested, p < 0.0005). This is the **recommended model** as it retains all three ratio types for physical interpretability.
+- **Backward elimination optimal:** 1 OES feature (band_CO2p_398_412) + 4 discharge = 5 features → R² = 0.918. More parsimonious but relies on a single OES feature.
+- Both models significantly outperform the full 13-OES model (R² = 0.798), demonstrating severe feature redundancy.
 
-**Paragraph 1 — Baseline paradox** [Role: Claim + Evidence]
+> **Phase 2 addition:** Disambiguated the two "optimal" models to address Phase 1 Observation risk.
 
-- **[Claim]** Config B (discharge parameters only) already predicts H₂O₂ yield accurately with a simple linear model, yet adding PCA-reduced OES features in Config C *degrades* performance across every carried-forward model — a paradox that motivates Phases 2 and 3.
-- **[Evidence]** Ridge Config B R² = 0.904; Ridge Config C R² = −0.175; MLP Config C R² = −1.131; PLS Config C R² = 0.625 (the only Config C model with non-trivial Phase 1 performance). Source: `phase3/results/tables/phase1_vs_phase2_vs_phase3_comparison.csv` (columns R2_P1).
-- **[Reference]** `tab:results_main`, `fig:phase1_heatmap_r2` (optional appendix)
+- **Tables:** `tab:bootstrap`, `tab:feature_importance`
 
-**Paragraph 2 — Tuning is not enough** [Role: Evidence + Transition]
-
-- **[Claim]** Optuna TPE tuning substantially lifts every non-linear Config C model, but no tuned Config C model matches tuned Config B — confirming that the performance ceiling is set by feature quality, not model capacity.
-- **[Evidence]** MLP C: −1.131 → 0.369 (ΔR² = +1.500); CNN C: 0.688 → 0.775; RF C: 0.239 → 0.456; MLP B: 0.568 → 0.861. Source: `phase3/.../phase1_vs_phase2_vs_phase3_comparison.csv` R2_P2 column; CNN from `phase2/results/tables/phase2_loocv_results_summary.csv`.
-- **[Role: Transition]** The highest tuned Config C result (CNN = 0.775) still trails the tuned Config B ceiling (MLP B = 0.861), motivating Phase 3.
-
-#### 2.3.2 Phase 3 — Domain-Knowledge Step-Change (~2 paragraphs)
-
-**Paragraph 1 — Step-change claim** [Role: Claim + Evidence]
-
-- **[Claim]** Replacing 11 PCA components with 13 domain-knowledge OES features produces the largest single-phase improvement in the project, closing most of the Config B / Config C gap in one step.
-- **[Evidence]** Ridge C: −0.175 → 0.798 (ΔR² = +0.973); MLP C: −1.131 → 0.815 (ΔR² = +1.946); PLS C: 0.625 → 0.744 (ΔR² = +0.119); RF C: 0.239 → 0.497 (ΔR² = +0.258). Source: `phase1_vs_phase2_vs_phase3_comparison.csv`, columns R2_P1 and R2_P3.
-- **[Reference]** `fig:r2_comparison` — R² scores across Phases 1 / 2 / 3 (bar chart)
-
-**Paragraph 2 — Cross-model generality** [Role: Comparison]
-
-- **[Claim]** The improvement is not model-specific: every carried-forward model (Ridge, PLS, RF, MLP) improves in Config C under domain features, and the two models most penalised by PCA (Ridge and MLP) are the two that recover most.
-- **[Evidence]** All four ΔR² values above are positive and of the same sign; the magnitudes follow the "worse in PCA → larger gain" ordering.
-
-#### 2.3.3 Phase 4 — Interpretability, Validation, and Minimal Model (~4 paragraphs)
-
-**Paragraph 1 — Consensus feature importance** [Role: Evidence]
-
-- **[Claim]** Consensus importance across four methods (Ridge coefficients, PLS VIP, RF permutation, MLP SHAP) places a small mix of discharge parameters and a CO₂⁺ band integral at the top, with spectroscopic ratios clustered in the upper-middle — no single atomic emission line is dominant.
-- **[Evidence]** Top-5 consensus ranks: `flow_rate_sccm` (mean rank 1.75), `band_CO2p_398_412` (4.75), `pulse_width_ns` (5.25), `I_486_Hb` (6.00), `band_CO_Hb_460_500` (6.00). Source: `phase4/results/tables/feature_importance_all_models.csv`.
-- **[Reference]** `fig:feature_importance`, `tab:feature_importance` (top-10 in appendix E)
-
-**Paragraph 2 — Statistical validation** [Role: Qualifier]
-
-- **[Claim]** Bootstrap CIs and a permutation test together establish that the domain-feature model captures a real input–output relationship, while also showing that Config C is *not* statistically superior to discharge-only Config B.
-- **[Evidence]** Bootstrap 95% CIs: Ridge B `[0.800, 0.955]`, Ridge C `[0.574, 0.910]` — **overlapping**; MLP B `[0.767, 0.923]`, MLP C `[0.647, 0.883]` — also overlapping. Source: `phase4/results/tables/bootstrap_ci_summary.csv`. Permutation test on the pruned 7-feature Ridge: observed R² = 0.920, zero of 2000 null R² matched or beat it → **p < 5 × 10⁻⁴**. Source: `phase4/results/tables/permutation_test_summary.csv`, `permutation_test_pruned_ridge.csv`.
-- **[Qualifier — explicit]** The Ridge B / Ridge C bootstrap CIs overlap. Config C is competitive with discharge-only but not *significantly better*; the value of domain features is interpretability and physical content, not headline R² superiority over Config B.
-- **[Reference]** `fig:bootstrap`, `fig:permutation` (optional), `tab:bootstrap`
-
-**Paragraph 3 — Category ablation** [Role: Evidence]
-
-- **[Claim]** Category ablation shows that any single *normalised* feature family — either the three spectroscopic ratios or the three band integrals — retains the full predictive signal, while single-wavelength line intensities substantially underperform.
-- **[Evidence]** Ratios (3 features, + 4 discharge) R² = 0.9063; Bands (3 + 4) R² = 0.9053; Single-wavelength (7 + 4) R² = 0.8232; Full 13 OES (+ 4) R² = 0.7984; Config B (4 discharge only) R² = 0.904. Source: `phase4/results/tables/ablation_summary_article.csv`.
-- **[Interpretation guard]** Do not explain *why* ratios/bands win here; that belongs in §2.4.
-- **[Reference]** `fig:category_ablation`, `tab:ablation`
-
-**Paragraph 4 — Backward elimination + pruned best model** [Role: Evidence]
-
-- **[Claim]** Iterative backward elimination drives R² monotonically up as redundant OES features are removed, and the permutation-validated pruned Ridge (3 OES ratios + 4 discharge) achieves the best R² in the project.
-- **[Evidence]** Backward elimination: R² rises from 0.7984 (13 OES) → 0.918 at 1 OES feature (`band_CO2p_398_412`) + 4 discharge. Pruned 7-feature Ridge (3 ratios + 4 discharge): observed R² = 0.920 (permutation-tested). Source: `phase4/results/tables/ablation_summary_article.csv` (backward elimination rows) + `permutation_test_summary.csv`.
-- **[Number discipline]** Keep two numbers separate: the category-ablation Ratios-only row is **0.9063**; the permutation-tested pruned Ridge is **0.9200**. The ~0.014 gap is an implementation detail (different refit pipelines); do *not* conflate.
-- **[Reference]** `fig:ablation_trajectory`, `tab:ablation`
-
-**Two disambiguated "optimal" models:**
-
-- **Pruned Ridge (recommended):** 3 spectroscopic ratios (`ratio_309_656`, `ratio_777_309`, `ratio_656_486`) + 4 discharge parameters = 7 features → R² = **0.920**, permutation p < 5 × 10⁻⁴. Recommended because it keeps all three ratio types for physical interpretability.
-- **Backward-elimination optimal:** `band_CO2p_398_412` + 4 discharge = 5 features → R² = **0.918**. Most parsimonious but relies on a single OES feature.
-
-> **Phase 5 addition:** Disambiguated the two "optimal" models with their exact feature lists and their separate R² sources.
-
-#### 2.3.4 Synthesis — Objectives Revisited (NEW, ~1 paragraph)
-
-- **[Role: Closing + Transition to §2.4]**
-- **[Obj 1 → result]** H₂O₂ yield is predictable from OES + discharge parameters at R² = 0.920 (pruned Ridge), validated by permutation test — *objective met* on this dataset.
-- **[Obj 2 → result]** Domain-knowledge features improve Config C by ΔR² ≈ +0.97 (Ridge) and +1.95 (MLP) over PCA — *objective met*; the Phase 1 → Phase 3 jump is the project's decisive finding.
-- **[Obj 3 → result]** Feature reduction converges (via two independent strategies) on ≤7 features; the 13-OES set is redundant — *objective met*.
-- **[Honest qualifier]** The bootstrap CIs for Ridge B and Ridge C overlap: on headline R² alone, discharge parameters already suffice. The domain-feature value is therefore interpretability, physical content, and deployability — not headline superiority. Interpretation of *why* this matters is deferred to §2.4.
-
-**Key figures/tables for §2.3:**
-
-- `fig:r2_comparison` (essential) — bar chart of R² across Phases 1 / 2 / 3 per model per config
-- `fig:feature_importance` (essential) — consensus importance heatmap
-- `fig:bootstrap` (essential) — bootstrap R² distributions with 95% CIs
-- `fig:ablation_trajectory` (essential) — backward elimination R² curve
-- `fig:category_ablation` (essential) — category ablation bar chart
-- `fig:permutation` (optional) — permutation null distribution
-- `tab:results_main` (essential) — Phase 1 / 2 / 3 R² matrix per model per config
-- `tab:bootstrap` (essential) — point R², 95% CI, RMSE
-- `tab:ablation` (essential) — category ablation + backward elimination summary
-- `tab:feature_importance` (optional, appendix) — top-10 consensus ranks
-
-All essential figures are already copied into `final report/report/images/` during Phase 5 execution (Step 2).
+**Key figures/tables:** `fig:r2_comparison`, `tab:bootstrap`, `tab:feature_importance`
 
 ---
 
