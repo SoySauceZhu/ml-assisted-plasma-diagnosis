@@ -15,7 +15,12 @@
       "Bash(pdflatex -interaction=nonstopmode main.tex)",
       "Bash(bibtex main:*)",
       "Bash(awk '/\\\\\\\\section\\\\{Introduction\\\\}/,/\\\\\\\\section\\\\{Procedure/' main.tex)",
-      "Bash(awk '/\\\\\\\\section\\\\{Procedure/,/\\\\\\\\section\\\\{Findings/' main.tex)"
+      "Bash(awk '/\\\\\\\\section\\\\{Procedure/,/\\\\\\\\section\\\\{Findings/' main.tex)",
+      "Bash(cp phase1/results/figures/pca_cumulative_variance.png \"final report/report/images/pca_cumulative_variance.png\")",
+      "Bash(cp phase1/results/figures/model_comparison_bar.png \"final report/report/images/phase1_model_comparison_bar.png\")",
+      "Bash(cp phase1/results/figures/predicted_vs_actual_grid.png \"final report/report/images/phase1_predicted_vs_actual_grid.png\")",
+      "Bash(cp phase3/results/figures/phase1_vs_phase2_vs_phase3_comparison.png \"final report/report/images/phase1_vs_phase2_vs_phase3_comparison.png\")",
+      "Bash(cp phase4/results/figures/fig1_feature_importance_heatmap.pdf \"final report/report/images/fig1_feature_importance_heatmap.pdf\")"
     ]
   }
 }

@@ -198,3 +198,35 @@ No LaTeX edits to `main.tex` in this phase — the actual Results prose will be 
 4. **Honest uncertainty**: wide CIs with n = 20 are acknowledged, not hidden.
 5. **Anti-patterns avoided**: no method dumps, no "Phase 1 failed" framing, no re-derivation of methods, no over-claim from single-point estimates.
 6. **Self-containment**: `results_flow.md` is usable as the sole blueprint when a later phase writes the §2.3 prose.
+
+---
+
+# Observation
+
+## Summary
+
+Phase 5 produced the three deliverables specified in the Action: a self-contained `results_flow.md`, seven figures copied into `final report/report/images/`, and a rewritten §2.3 in `final_phase5/outline.md`. The flow follows the same 8-part structure used for `introduction_flow.md` and `methodology_flow.md` (pre-writing questions → backward reasoning → forward story R0–R9 → anti-patterns → paragraph plan → figures plan → verified fact sheet → consistency notes). The narrative centre is R4 (Phase 3 step-change) with Ridge Config C −0.175 → 0.798 and MLP Config C −1.131 → 0.815 as the headline numbers, supported visually by `phase1_vs_phase2_vs_phase3_comparison.png`. Phase 4 beats (R5–R8) split importance, bootstrap uncertainty, permutation significance, and feature reduction into interpretive paragraphs rather than table walkthroughs. Every quantitative claim was verified directly against the raw CSVs under `phase{1,2,3,4}/results/tables/` before being written into the flow or the outline — no number was lifted from memory or `experiments.md` alone.
+
+## What went well
+
+- **Traceability held**: the fact sheet in §7 of `results_flow.md` lists each number with its source CSV; the bootstrap CIs, permutation p-value, consensus importance ranks, and ablation rows all match the raw tables.
+- **Narrative arc is hypothesis-driven**: the forward story maps R1 → H1 rejected, R3 → H2 rejected, R4 → H3 supported, R5–R8 → H4 supported. This resolves the four hypotheses posed in §2.2 in the same order, so §2.3 will read as a payoff, not a diary.
+- **Honest uncertainty is built in, not bolted on**: R6 explicitly acknowledges Ridge B ↔ Ridge C and Ridge C ↔ MLP C bootstrap CI overlap. AP4 flags over-claim as an anti-pattern, and R9's synthesis justifies Ridge by Occam's razor rather than by a capability gap.
+- **Phase 3 is proportionally weighted**: R4 is marked as the longest paragraph and owns the centrepiece figure, mirroring the §2.2.5 emphasis in the Methodology.
+- **Plan-specified figure selection was respected**: Phase 2 was deliberately left without a dedicated figure (R3 handled inline), and the permutation test is reported as inline numbers per the user's explicit instruction that the existing figure is inadequate.
+
+## Discrepancies flagged during execution (for manual follow-up)
+
+1. **`phase4_result.txt` vs. `phase4_result.md`** — the Plan references `phase4_result.txt`; the actual file on disk is `phase4_result.md`. All other figures and tables it pointed to exist. No action needed beyond noting the filename.
+2. **Permutation p-value reporting** — `permutation_test_summary.csv` stores `p_value = 0.0` literally (i.e., no null R² ≥ observed across 2000 shuffles). The outline and flow report this as **p < 0.0005** (the tightest bound given n = 2000). This phrasing should be preserved when drafting §2.3 prose; avoid "p = 0".
+3. **Ratios-only ablation R² = 0.906 vs. pruned-Ridge permutation R² = 0.920** — these refer to *different model fits*. The category ablation keeps the 3 ratios + 4 discharge features but uses the same Ridge fit as the broader ablation sweep (R² = 0.9063 from `ablation_summary_article.csv`). The permutation test refits Ridge on just that 7-feature subset, yielding R² = 0.9200. The prose for R7/R8 must make this distinction explicit to avoid looking like a typo.
+4. **XGBoost anomaly** — flagged in §2.2.3 already, but worth re-stating in R1: XGBoost R² = −0.108 identical across all configs is a model artefact (default hyperparameters unsuitable for n = 20 + LOOCV), not a finding about OES. Mention briefly and then drop from the Phase 1 narrative.
+
+## Risks / caveats for later phases
+
+- **n = 20 ceiling**: every claim beyond the permutation-tested pruned model sits inside overlapping bootstrap CIs. The §2.3 prose must stay disciplined about this — the Phase 3 step-change is large in *magnitude* but not formally "significant" until the feature set is pruned. AP4 in the flow enforces this, but the later writing phase will need to resist shortcutting.
+- **Figure inventory is not yet curated for consistency of style**: the seven copied figures mix PNG (P1, P3, P4 ranking) and PDF (P4 importance, P4 bootstrap). LaTeX handles both, but the final report may benefit from regenerating the PNGs as PDFs for uniform vector quality — out of scope for Phase 5.
+- **Redundant figures already exist in `images/`**: the directory previously contained `fig_feature_importance.pdf`, `fig_bootstrap.pdf`, `fig_category_ablation.pdf`, `fig_r2_comparison.png`, etc. These were not deleted; the later writing phase should reference the newly-copied filenames (explicit in the flow/outline) and ideally clean up the older duplicates.
+- **No `main.tex` changes yet**: §2.3 in `main.tex` is still skeleton/placeholder. The prose pass will need to preserve the label `\label{sec:results}` and ensure figure paths resolve to `images/<filename>`.
+- **Tables for §2.3 are not yet drafted**: `tab:bootstrap`, `tab:feature_importance`, and `tab:ablation` are referenced but not created. They can be built directly from the CSVs during the prose-writing phase.
+

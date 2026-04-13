@@ -193,34 +193,92 @@ Nanosecond pulsed CO₂ bubble plasma discharge is a promising green chemistry t
 
 ### 2.3 Findings / Results (`\label{sec:results}`)
 
-#### 2.3.1 Phase 1 & 2 — Baseline and Tuned Performance
-- **[Evidence]** Config B (discharge only) establishes strong baseline: Ridge R² = 0.904, PLS R² = 0.898
-- **[Challenge]** Config C (OES+discharge via PCA) fails: Ridge R² = −0.17, MLP R² = −1.13
-- **[Evidence]** After Optuna tuning: MLP Config C improves −1.13 → 0.37; CNN Config C = 0.77 (best OES model), but still below Config B
-- **[Takeaway]** PCA-based OES features are insufficient; tuning alone cannot fix bad features
+> **Phase 5 writing principle (from `results_flow.md`):** §2.3 resolves the four hypotheses posed in §2.2 in order. The narrative centre of gravity is §2.3.2 (Phase 3 step-change); Phase 4 supplies interpretability and statistical confirmation. Frame Phase 1/2 as *hypothesis tests rejected*, never as "failures". All figures live in `final report/report/images/`. See `results_flow.md` for the 9-beat forward story (R0–R9), anti-pattern warnings, and the verified quantitative fact sheet.
 
-#### 2.3.2 Phase 3 — Domain-Knowledge Breakthrough
-- **[Evidence]** Domain features produce step-change: Ridge Config C R² from −0.17 → 0.80; MLP Config C from 0.37 → 0.82
-- **[Advantage]** Gap between Config B and Config C substantially reduced across all models
-- **Figure:** `fig:r2_comparison` — R² scores across Phases 1–3
+#### 2.3.0 Section opener (R0)
+- **[Role: Roadmap]** One-paragraph roadmap listing the four hypotheses from §2.2 and signalling that the headline finding is the Phase 3 step-change plus its Phase 4 confirmation.
 
-#### 2.3.3 Phase 4 — Interpretability and Minimal Model
-- **[Evidence]** Consensus feature importance: flow_rate_sccm (rank 1), band_CO2p_398_412 (rank 2), pulse_width_ns (rank 3)
-- **[Evidence]** Bootstrap 95% CI: Ridge B [0.800, 0.955], Ridge C [0.574, 0.910] — overlapping, no significant difference
-- **[Evidence]** Permutation test: observed R² = 0.920, p < 0.0005 (2000 permutations)
-- **[Evidence]** Category ablation: ratios (3 features) → R² = 0.906; band integrals (3) → R² = 0.905; single-wavelength (7) → R² = 0.823
-- **[Evidence]** Backward elimination: R² increases monotonically as redundant features are removed (0.798 → 0.918 at 1 OES feature)
+#### 2.3.1 Phase 1 & 2 — Baseline Ceiling and the PCA Dead End
+- **[Evidence, R1]** Config B (discharge only) establishes a strong baseline that any OES-inclusive model must beat: Ridge R² = **0.904**, PLS R² = **0.898**.
+- **[Evidence + Interpretation, R2 — H1 rejected]** Under PCA, adding OES actively **degrades** Config C: Ridge R² = **−0.175**, MLP R² = **−1.131**. Structural failure, not a cutoff artefact — 11 PCA components already preserve ≥95% of the spectral variance.
+- **[Evidence + Interpretation, R3 — H2 rejected, Phase 2 handled inline]** Optuna tuning lifts non-linear models substantially but cannot clear the Config B ceiling from OES: MLP Config C −1.131 → **0.369**; CNN Config C 0.688 → **0.775** (best tuned OES-only model, still below Ridge B 0.904); MLP Config B 0.568 → 0.861. The ceiling is set by feature quality, not model capacity.
+- **[Takeaway]** PCA-based OES features do not carry the prediction signal, and hyperparameter tuning cannot compensate — motivating a feature-level intervention in Phase 3.
+
+> **Phase 5 note — Phase 2 handling (from user Plan):** Phase 2 receives **no dedicated figure**. R3 is reported inline via numbers or a compact 3-row table. The paragraph is intentionally short: it is a bridging beat, not an independent finding.
+
+**Figures / tables for §2.3.1**
+- `pca_cumulative_variance.png` (R2) — 11 PCs ≥95% variance, pre-empts "too few PCs" objection
+- `phase1_model_comparison_bar.png` (R1) — Config B dominates, Config C lags across 7 models
+- `phase1_predicted_vs_actual_grid.png` (R2, optional) — visual scatter collapse for Config C non-linear models
+- *No figure for Phase 2*; short inline table listing MLP C, CNN C, MLP B tuning deltas if needed
+
+---
+
+#### 2.3.2 Phase 3 — The Domain-Knowledge Step-Change ← **narrative centre**
+- **[Evidence + Interpretation, R4 — H3 supported]** Replacing 11 PCA components with 13 physically motivated OES features collapses the Config B / Config C gap across every model class:
+  - Ridge Config C: −0.175 → **0.798** (ΔR² ≈ +0.973)
+  - MLP Config C: −1.131 → **0.815** (ΔR² ≈ +1.946)
+  - PLS Config C: 0.625 → **0.744** (ΔR² ≈ +0.119)
+- **[Key point]** The same OES spectra, re-encoded with physical knowledge, unlock the predictive signal that PCA had obscured. This is the central finding of the project and earns the longest paragraph in §2.3 (mirroring the proportional emphasis of §2.2.5 in the Methodology).
+
+**Figures / tables for §2.3.2**
+- `phase1_vs_phase2_vs_phase3_comparison.png` — **centrepiece figure**; the step-change made visually unmissable
+
+---
+
+#### 2.3.3 Phase 4 — Interpretability, Uncertainty, and the Minimal Model
+
+**R5 — Feature importance (consensus ranking)**
+- **[Evidence]** 4-model consensus (Ridge coefficients, PLS VIP, RF permutation, MLP SHAP) identifies:
+  - Rank 1: **flow_rate_sccm** (mean rank 1.75)
+  - Rank 2: **band_CO2p_398_412** (4.75)
+  - Rank 3: **pulse_width_ns** (5.25)
+  - Rank 4 (tie): I_486_Hb and band_CO_Hb_460_500 (6.00)
+- **[Interpretation]** The two leading OES features are **bands**, not single-wavelength lines — physically intuitive, since band integrals are drift-invariant.
+
+**R6 — Honest uncertainty via bootstrap**
+- **[Evidence]** Bootstrap 95% CIs (500 iterations):
+  - Ridge B [0.800, 0.955]
+  - Ridge C [0.574, 0.910]
+  - MLP  B [0.767, 0.923]
+  - MLP  C [0.647, 0.883]
+- **[Interpretation]** Ridge B and Ridge C CIs overlap — at the 13-feature stage, adding OES does **not yet deliver a statistically significant improvement**. Ridge C and MLP C CIs also overlap — the feature–target relationship is essentially linear at this feature set. These overlaps must be named, not hidden (anti-pattern AP4).
+
+**R7 — Permutation significance on the pruned model**
+- **[Evidence]** Permutation test on the pruned 7-feature Ridge (3 OES ratios + 4 discharge):
+  - Observed R² = **0.9200**
+  - 2000 label-shuffle permutations → no null R² ≥ observed
+  - **p < 0.0005**
+- **[Handling]** No figure — per Plan, the existing permutation figure is inadequate. Report via inline sentences or a compact 3-row inline table.
+
+**R8 — Feature reduction converges on a minimal model**
+- **[Category ablation, Ridge Config C]**:
+  - All 13 OES → R² = 0.798
+  - Single-wavelength only (7) → R² = 0.823
+  - Band integrals only (3) → R² = **0.905**
+  - Ratios only (3) → R² = **0.906**
+  - Discharge only (Config B) → R² = 0.904
+- **[Backward elimination trajectory]** R² rises **monotonically** from 0.798 (13 OES) to **0.918** at 1 OES feature (band_CO2p_398_412), then drops back to 0.904 (= Config B) when the last OES feature is removed — confirming OES contributes real (if modest) information.
 
 **Feature reduction — two optimal models (disambiguated):**
-- **Category ablation optimal:** 3 OES ratios + 4 discharge = 7 features → R² = 0.920 (permutation-tested, p < 0.0005). This is the **recommended model** as it retains all three ratio types for physical interpretability.
-- **Backward elimination optimal:** 1 OES feature (band_CO2p_398_412) + 4 discharge = 5 features → R² = 0.918. More parsimonious but relies on a single OES feature.
-- Both models significantly outperform the full 13-OES model (R² = 0.798), demonstrating severe feature redundancy.
+- **Category-ablation optimal**: 3 OES ratios (OH/Hα, O/OH, Hα/Hβ) + 4 discharge = **7 features → R² = 0.920** (permutation-confirmed, p < 0.0005). **Recommended model** — retains all three ratio types for drift invariance and physical interpretability.
+- **Backward-elimination optimal**: 1 OES feature (band_CO2p_398_412) + 4 discharge = 5 features → R² = 0.918. More parsimonious but relies on a single OES feature.
+- Both models outperform the full 13-OES model (R² = 0.798), demonstrating severe feature redundancy.
 
 > **Phase 2 addition:** Disambiguated the two "optimal" models to address Phase 1 Observation risk.
+> **Phase 5 note:** The ratios-only category-ablation R² (0.906) and the permutation-test observed R² (0.920) refer to **different fits** — the permutation test model was refit on the reduced set. Make this distinction explicit in the prose.
 
-- **Tables:** `tab:bootstrap`, `tab:feature_importance`
+**R9 — Synthesis paragraph**
+- **[Transition]** One short paragraph closing the evidence chain: PCA fails (R1–R2) → tuning cannot rescue (R3) → domain features succeed (R4) → minimal interpretable subset is sufficient (R5–R8). Ridge is chosen for deployment by Occam's razor (R6 overlap), not by capability gap. Hand off to §2.4 Conclusions.
 
-**Key figures/tables:** `fig:r2_comparison`, `tab:bootstrap`, `tab:feature_importance`
+**Figures / tables for §2.3.3**
+- `fig1_feature_importance_heatmap.pdf` (R5) — consensus importance across 4 methods
+- `fig5_bootstrap_r2_distributions.pdf` (R6) — bootstrap R² distributions and 95% CIs
+- `rank_on_model_config.png` (R8) — overall model × config ranking, locating the pruned Ridge
+- *No permutation figure*; inline report
+- Tables: `tab:bootstrap`, `tab:feature_importance`, `tab:ablation` (new or merged)
+
+**Overall key figures/tables for §2.3:** `pca_cumulative_variance.png`, `phase1_model_comparison_bar.png`, `phase1_predicted_vs_actual_grid.png`, `phase1_vs_phase2_vs_phase3_comparison.png` (centrepiece), `fig1_feature_importance_heatmap.pdf`, `fig5_bootstrap_r2_distributions.pdf`, `rank_on_model_config.png`; `tab:bootstrap`, `tab:feature_importance`, `tab:ablation`.
 
 ---
 
