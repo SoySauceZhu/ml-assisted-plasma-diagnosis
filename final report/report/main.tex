@@ -33,6 +33,8 @@
 \usepackage{appendix}               % Appendix formatting
 \usepackage{xcolor}                 % Colour (for TODO notes)
 \usepackage{lipsum}                 % Placeholder text — REMOVE before submission
+\usepackage{ulem}
+
 
 % ---- Hyperref setup -----------------------------------------
 \hypersetup{
@@ -102,7 +104,11 @@
 
     \vfill
 
-    \includegraphics[width=0.25\textwidth]{figures/uol_logo.png}   % Replace with actual logo file
+    \IfFileExists{figures/uol_logo.png}{%
+        \includegraphics[width=0.25\textwidth]{figures/uol_logo.png}%
+    }{%
+        \fbox{\parbox{0.25\textwidth}{\centering\small[uol\_logo.png\\not found]}}%
+    }
 \end{titlepage}
 
 % ---- Acknowledgements (optional, not in word count) ---------
@@ -119,8 +125,6 @@ I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance throughout 
 
 \todo{Write executive summary — maximum 200 words, text only, no figures. Cover: project goal, methodology, key results, main conclusion.}
 
-% Draft (edit to ≤200 words):
-This report presents a machine learning (ML) pipeline for real-time prediction of hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) yield from nanosecond pulsed CO\textsubscript{2} bubble plasma discharge experiments. The dataset, sourced from Xi'an Jiaotong University, comprises 701 optical emission spectroscopy (OES) samples paired with four discharge parameters. Seven regression models were evaluated across four iterative phases: baseline modelling with PCA-reduced OES features, hyperparameter optimisation using Optuna, domain-knowledge-driven feature engineering, and model interpretability analysis. The central finding is that replacing PCA components with 13 physically motivated OES features — emission line intensities, band integrals, and spectroscopic ratios — increased Ridge regression R\textsuperscript{2} on the combined input configuration from $-0.17$ to $0.80$. Subsequent feature reduction identified a seven-feature Ridge model achieving R\textsuperscript{2}~$= 0.92$, matching the performance of complex neural networks. A permutation test confirmed the result is statistically genuine ($p < 0.00005$). These findings demonstrate that domain knowledge is the decisive factor in OES-based ML, enabling accurate, interpretable, and deployable real-time plasma diagnosis.
 
 % ---- Tables of Contents / Figures / Tables / Abbreviations --
 \newpage
@@ -159,13 +163,13 @@ This report presents a machine learning (ML) pipeline for real-time prediction o
 
 Plasma-based green chemistry has emerged as a promising route for converting greenhouse gases into value-added chemicals. Nanosecond pulsed CO\textsubscript{2} bubble discharge enables efficient synthesis of hydrogen and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) from CO\textsubscript{2} and water~\cite{Gao2024NSCO2Discharge, Shao2018PulsedDischarges}. As these processes advance toward industrial deployment, real-time monitoring of product yield becomes essential for closed-loop control. However, conventional H\textsubscript{2}O\textsubscript{2} quantification relies on offline titration --- a procedure that is slow, intrusive, and incompatible with real-time feedback.
 
-Optical Emission Spectroscopy (OES) provides a non-intrusive, in-situ diagnostic window into the plasma by recording light emitted by excited species~\cite{Laux2003OESAir}. Traditional OES analysis employs spectroscopic techniques such as Boltzmann plots and line-ratio methods, which require physical model assumptions and expert interpretation~\cite{Laux2003OESAir, Srikar2024Accelerated}. Machine learning (ML) offers a data-driven alternative capable of automating OES-based diagnostics for real-time applications~\cite{Gidon2019MLCAP}. However, a single OES measurement in this study comprises 701 wavelength points, creating a high-dimensional input that poses challenges for ML, particularly on small datasets where spurious correlations are likely.
+Optical Emission Spectroscopy (OES) provides a non-intrusive, in-situ diagnostic window into the plasma by recording light emitted by excited species~\cite{Laux2003OESAir}. Traditional OES analysis employs spectroscopic techniques such as Boltzmann plots and line-ratio methods, which require physical model assumptions and expert interpretation~\cite{Laux2003OESAir, Srikar2024Accelerated}. Machine learning (ML) offers a data-driven alternative capable of automating OES-based diagnostics for real-time applications~\cite{Gidon2019MLCAP}. However, OES measurement faces high-dimensional complexity, for example, the OES used in this study comprises 701 wavelength points, creating a dimensional disaster for ML model, particularly on small datasets where spurious correlations are likely.
 
 \subsection{Objectives}
 
 This project addresses three objectives:
 \begin{enumerate}[label=\arabic*.]
-    \item Build ML regression models to predict H\textsubscript{2}O\textsubscript{2} yield from OES spectra and discharge parameters.
+    \item Build ML/DL models to predict H\textsubscript{2}O\textsubscript{2} yield from OES spectra and discharge parameters.
     \item Investigate whether domain-knowledge-driven feature engineering outperforms automated dimensionality reduction (PCA).
     \item Identify the minimal, physically interpretable feature set for a practical real-time predictor.
 \end{enumerate}
@@ -183,7 +187,7 @@ Traditional spectroscopy has long recognised the value of line intensity ratios 
 \section{Procedure / Methodology}
 \label{sec:method}
 
-The experimental pipeline predicts H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters using ML regression. It comprises four phases, each testing a specific hypothesis: (1)~whether standard PCA-based OES features carry predictive information, (2)~whether hyperparameter tuning compensates for feature quality, (3)~whether domain-knowledge features outperform automated feature extraction, and (4)~which features are essential and which are redundant. The following subsections detail the dataset, evaluation protocol, and each experimental phase.
+The experimental pipeline predicts H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters using models including linear regression models, MLP, RF and CNN. It comprises four phases, each testing a specific hypothesis: (1)~whether PCA-based OES features or discharge parameters carry predictive information, (2)~whether hyperparameter tuning compensates for feature quality, (3)~whether domain-knowledge features outperform automated feature extraction, and (4)~which features are essential and which are redundant. The following subsections detail the dataset, evaluation protocol, and each experimental phase.
 
 \subsection{Dataset and Evaluation Protocol}
 \label{sec:dataset}
@@ -194,7 +198,7 @@ Model performance was evaluated using Leave-One-Out Cross-Validation (LOOCV), wh
 
 \subsection{Input Configurations}
 
-Three input configurations were defined as a controlled-variable design to isolate the contribution of each data source (Table~\ref{tab:configs}). Config~B (discharge parameters only) serves as a strong baseline: any OES-inclusive configuration must outperform Config~B to justify the additional complexity of OES feature processing. This three-way comparison prevents a common pitfall in ML studies --- claiming that a model ``works'' without testing whether simpler inputs achieve the same result.
+Three input configurations were defined as a controlled-variable design to isolate the contribution of each data source (Table~\ref{tab:configs}). Config~B (discharge parameters only) serves as a strong baseline: any OES-inclusive configuration must outperform Config~B to justify the additional complexity of OES feature processing. This three-way comparison prevents a common pitfall in ML studies that claiming that a model ``works'' without testing whether simpler methods achieve the same result.
 
 \begin{table}[H]
     \centering
@@ -217,18 +221,18 @@ Seven regression models were selected to span three categories of inductive bias
 
 \subsection{Phase 2 --- Hyperparameter Optimisation}
 
-Non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Over 100 trials were conducted per model--configuration pair. Linear models (Ridge, PLS) were not tuned as their regularisation parameters have minimal impact at this scale. The purpose of this phase was strategic: by establishing an upper-bound performance ceiling with tuned models \emph{before} feature engineering, it tests whether model complexity alone can compensate for uninformative PCA features.
+Non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Over 100 trials were conducted per model--configuration pair to identify optimal hyperparameters. Linear models (Ridge, PLS) were not tuned as their regularisation parameters have minimal impact at this scale. The purpose of this phase was strategic: by identifying the upper-bound performance ceiling with tuned models, it indicates that any subsequent improvement must originated from input feature representability itself, justifying the need for domain-knowledge feature engineering.
 
 \subsection{Phase 3 --- Domain-Knowledge Feature Engineering}
 
-The preceding phases relied on PCA for OES dimensionality reduction. PCA selects directions of maximum spectral variance, but these directions need not align with the prediction target, especially when the dataset is small and the relevant signal is distributed across specific emission lines rather than broad spectral patterns. Traditional plasma diagnostics has long used physically motivated spectral features for robust analysis: line intensity ratios for electron temperature estimation~\cite{Laux2003OESAir}, band-head intensities for species identification~\cite{Paris2005N2Ratio}, and spectroscopic ratios for electric field measurement. Wang et al.~\cite{Wang2025MLOESCascaded} recently validated this approach for ML, achieving strong predictive performance using line intensity ratios. This project extends the principle to chemical yield prediction.
+The preceding phases relied on PCA for OES dimensionality reduction. PCA selects directions of maximum variance in vector space, but these directions need not have physical semantic meaning, especially when the dataset is small and the relevant signal is distributed across specific emission lines rather than broad spectral patterns. Traditional plasma diagnostics has long used physically motivated spectral features for robust analysis: line intensity ratios for electron temperature estimation~\cite{Laux2003OESAir}, band-head intensities for species identification~\cite{Paris2005N2Ratio},\sout{and spectroscopic ratios for electric field measurement}. Wang et al.~\cite{Wang2025MLOESCascaded} recently validated this approach for ML, achieving strong predictive performance using line intensity ratios. This project extends the principle to chemical yield prediction.
 
 Thirteen physically motivated OES features were derived to replace the 11 PCA components (Table~\ref{tab:oes_features}): seven emission line intensities, each corresponding to a plasma species relevant to H\textsubscript{2}O\textsubscript{2} formation pathways; three band integrals that capture broadband emission and are robust to spectral noise; and three spectroscopic ratios that encode relative species populations. Combined with the four discharge parameters, Config~C comprised 17~features in this phase.
 
 \begin{table}[H]
     \centering
     \small
-    \caption{Thirteen domain-knowledge OES features with corresponding plasma species and physical significance. A detailed derivation is provided in Appendix~\ref{app:oes_features}.}
+    \caption{Thirteen domain-knowledge OES features with corresponding plasma species and physical significance. \sout{A detailed derivation is provided in Appendix~\ref{app:oes_features}.}}
     \label{tab:oes_features}
     \begin{tabular}{llcll}
         \toprule
@@ -236,11 +240,11 @@ Thirteen physically motivated OES features were derived to replace the 11 PCA co
         \midrule
         I\textsubscript{OH}        & Line  & 309     & OH (A--X)            & H\textsubscript{2}O\textsubscript{2} precursor (OH+OH$\to$H\textsubscript{2}O\textsubscript{2}) \\
         I\textsubscript{O}         & Line  & 777     & Atomic O             & CO\textsubscript{2} dissociation; OH source \\
-        I\textsubscript{H$\beta$}  & Line  & 486     & H (Balmer-$\beta$)   & H\textsubscript{2}O dissociation marker \\
-        I\textsubscript{H$\alpha$} & Line  & 656     & H (Balmer-$\alpha$)  & H\textsubscript{2}O dissociation degree \\
+        I\textsubscript{H$\beta$}  & Line  & 486     & H (Balmer-$\beta$)   & H\textsubscript{2}O dissociation product \\
+        I\textsubscript{H$\alpha$} & Line  & 656     & H (Balmer-$\alpha$)  & H\textsubscript{2}O dissociation product \\
         I\textsubscript{N$_2$}     & Line  & 337     & N\textsubscript{2} (SPS)  & High-energy electron marker \\
         I\textsubscript{CO$_2^+$}  & Line  & 406     & CO\textsubscript{2}\textsuperscript{+} (FDB)  & CO\textsubscript{2} ionisation degree \\
-        I\textsubscript{C$_2$}     & Line  & 516     & C\textsubscript{2} (Swan) & Deep dissociation indicator \\
+        I\textsubscript{C$_2$}     & Line  & 516     & C\textsubscript{2} (Swan) & Deep dissociation indicator\cite{Gao2024NSCO2Discharge} \\
         \midrule
         $\int$OH                   & Band  & 306--312 & OH (A--X) band      & Noise-robust total OH emission \\
         $\int$CO$_2^+$             & Band  & 398--412 & CO\textsubscript{2}\textsuperscript{+} band & Reactant consumption marker \\
@@ -278,7 +282,11 @@ Config~B (discharge parameters only) achieved R\textsuperscript{2}~$\approx 0.90
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{figures/r2_comparison.png}  % replace with actual figure
+    \IfFileExists{figures/r2_comparison.png}{%
+        \includegraphics[width=0.85\textwidth]{figures/r2_comparison.png}%
+    }{%
+        \fbox{\parbox{0.85\textwidth}{\centering\vspace{3em}\small[r2\_comparison.png not found]\vspace{3em}}}%
+    }
     \caption{R\textsuperscript{2} scores across Phases 1–3 for all models and input configurations. Phase 3 domain-knowledge features produced a dramatic improvement in Config~C performance.}
     \label{fig:r2_comparison}
 \end{figure}
