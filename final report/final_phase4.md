@@ -186,3 +186,26 @@ After writing both sections, verify:
 4. No results leak into Methodology — clean separation between method description and findings
 5. All anti-patterns from introduction_flow.md and methodology_flow.md are avoided
 6. Writing quality matches the research-paper-writing skill standards: clear paragraph flow, strong topic sentences, no method dumps
+
+---
+
+# Observation
+
+## Summary
+
+Phase 4 delivered polished drafts of §1 Introduction and §2 Methodology in `main.tex`, following the Phase 3 outline and the Phase 2/3 writing-flow guides. The Introduction was built around the "domain knowledge is decisive" narrative (not a PCA-failure story), with three subsections (Background, Objectives, State of the Art) and 14 IEEE-style citations drawn from `references.bib`. The Methodology was rewritten as a hypothesis-driven pipeline: an overview paragraph framing the 4 phases as hypothesis tests, followed by subsections on dataset/LOOCV, input configurations, and the four phases. §2.5 (domain features) was given proportionally more space (3 paragraphs: motivation, design, advantages) to signal it as the central contribution, and a new `tab:oes_features` lists all 13 features with wavelength, species, and physical significance. `tab:configs` was updated to reflect phase-specific feature counts. The final LaTeX compiled cleanly with all citations resolved.
+
+## What went well
+
+- **Narrative framing held**: both sections followed the anti-pattern guardrails — no "PCA failed" story in the Introduction, no chronological diary in the Methodology, no R² values leaking into §2.
+- **Central contribution is visible**: §2.5's 3-paragraph expansion plus `tab:oes_features` make the domain-feature work clearly the methodological core.
+- **Justification coverage**: every method choice (LOOCV, 7-model selection, Config A/B/C, Optuna, consensus importance, bootstrap + permutation, two reduction strategies) has an explicit "why".
+- **Fact-checking caught a pre-existing error**: the skeleton's "701 samples" was corrected to 20 samples after verifying against `loocv_predictions_detail.csv`; the stale claim in Conclusions was fixed at the same time.
+
+## Risks / caveats for later phases
+
+- **Citations for feature justification are still placeholders**: as flagged in the Plan tips, no BibTeX entries exist for the manual selection of the 13 features. The current draft cites adjacent works (Laux2003, Paris2005, Wang2025) rather than direct sources — the user will need to add missing references before submission.
+- **Stefas2025 is a preprint**: cited with that caveat in prose, but if a peer-reviewed version appears before submission the key should be updated.
+- **Word counts are at the upper bound**: Introduction ≈ 550 words (within target), Methodology ≈ 1000 words (at the lower end of the 1000–1500 target). If Results/Discussion push the report past the 4000-word main-section budget, §2.2.3–§2.2.4 can be tightened first since §2.5 must retain its proportional weight.
+- **Pre-existing image placeholders remain**: `uol_logo.png` and `r2_comparison.png` are referenced in the skeleton but absent; these are not Phase 4's scope but will need to be resolved before final compilation.
+- **No results-side cross-checks yet**: Phase 4 only touched §1 and §2. Any claim in the Introduction that implicitly previews Results (e.g., "domain features outperform PCA") is defensible only if Phase 5's Results actually confirms it — worth re-reading §1 after §3 is drafted to catch any overclaim.
