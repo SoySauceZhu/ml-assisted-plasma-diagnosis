@@ -23,7 +23,9 @@
       "Bash(cp phase4/results/figures/fig1_feature_importance_heatmap.pdf \"final report/report/images/fig1_feature_importance_heatmap.pdf\")",
       "Bash(pdflatex -interaction=nonstopmode -halt-on-error main.tex)",
       "Read(//tmp/**)",
-      "Bash(echo \"---EXITCODE $?---\")"
+      "Bash(echo \"---EXITCODE $?---\")",
+      "Bash(awk '/\\\\\\\\section\\\\{Conclusions\\\\}/,/\\\\\\\\section\\\\{Recommendations/' main.tex)",
+      "Read(//private/tmp/**)"
     ]
   }
 }

@@ -284,11 +284,45 @@ Nanosecond pulsed CO₂ bubble plasma discharge is a promising green chemistry t
 
 ### 2.4 Conclusions (`\label{sec:conclusions}`)
 
-- **[Objective 1 met]** Best model R² = 0.920, enabling practical real-time yield prediction
-- **[Objective 2 met]** Domain-knowledge features decisively outperform PCA (Ridge Config C: −0.17 → 0.80) — central novel finding
-- **[Objective 3 met]** 7-feature Ridge matches neural networks; interpretable and deployable
-- **[Broader implication]** For physically structured scientific datasets (especially small ones), domain-knowledge feature engineering > automated dimensionality reduction
-- **[Limitation]** Single laboratory configuration; generalisation unvalidated; small sample size limits non-linear models
+> **Phase 7 note:** This outline block is the paragraph blueprint for the rewritten §2.4 in `main.tex`. Structure follows the C1–C5 forward story from `final_phase7/conclusion_flow.md`. Every number is anchored in `results_flow.md` §7; the Conclusion cites, it does not introduce. Target length ≈ 350–500 words (of the ≈ 1250 remaining budget for §2.4 + §2.5 + §2.6). §2.5 and §2.6 are out of Phase 7 scope.
+
+**C1 — Objective resolution (≈ 80 words)**
+- Opening paragraph; name each of the three §1.2 objectives in order and mark it met with the headline number from §2.3.
+- *Obj. 1* (build ML models predicting H₂O₂ yield): met by the pruned 7-feature Ridge at R² = 0.920, RMSE = 0.066.
+- *Obj. 2* (test whether domain features outperform PCA): met by the Phase 1 → Phase 3 step-change in Config C — Ridge −0.175 → 0.798, MLP −1.131 → 0.815.
+- *Obj. 3* (identify a minimal interpretable feature set): met by the convergence of backward elimination and category ablation on ≤ 7 features.
+
+**C2 — Central contribution (≈ 100 words)**
+- Interprets *why* the project succeeded: domain-knowledge feature engineering was the decisive lever, not PCA and not hyperparameter tuning.
+- Pointer: §2.3.2 R4 (Phase 3 step-change across every model class) + §2.3.1 R3 (tuning insufficient — best tuned OES-only result CNN Config C = 0.775, still below Ridge Config B = 0.904).
+- Framing constraint (from `conclusion_flow.md` AP2): describe Phase 3 as a **step-change in point estimates**, not as a formal PCA-vs-domain significance test. The significance language is reserved for the pruned model in C3.
+
+**C3 — Minimal deployable model (≈ 90 words)**
+- Pointer: §2.3.3 R7 + R8. The deployable artefact is a Ridge regression on the three drift-invariant spectroscopic ratios (OH/Hα, O/OH, Hα/Hβ) plus the four discharge parameters — 7 features total, R² = 0.920, RMSE = 0.066.
+- Statistical backing: permutation test on 2000 label shuffles gives p < 0.0005. Attach this significance **only** to the pruned-refit model, never to the 13-feature Ridge.
+- Justification for Ridge over MLP: the Ridge Config C [0.574, 0.910] and MLP Config C [0.647, 0.883] bootstrap CIs overlap (§2.3.3 R6) — Occam's razor, not a capability gap.
+
+**C4 — Honest limitations (≈ 80 words)**
+- *CI overlap at the 13-feature stage*: Ridge Config B [0.800, 0.955] and Ridge Config C [0.574, 0.910] overlap substantially — a "domain features statistically better than PCA" claim is **not** defensible before pruning.
+- *n = 20*: the root cause of the wide bootstrap CIs and the ceiling on non-linear model discriminability.
+- *Single reactor / single operator / single wavelength calibration*: cross-reactor generalisation is untested.
+- *Feature-list specificity*: the 13 OES features were derived for the CO₂-bubble plasma chemistry; other plasma systems will need their own domain features.
+- *XGBoost anomaly (noted in §2.3.1 but not a true limitation)*: left out of C4 — documented and excluded, not a ceiling on the central claim.
+
+**C5 — Broader implication + transition (≈ 70 words)**
+- Links back to the §1.3 literature gap: modern OES + ML pipelines default to PCA/PLS and overlook the diagnostic domain knowledge that traditional spectroscopy has encoded for decades. This project closes the loop operationally.
+- Generalisation: for small, physically structured scientific datasets, domain-knowledge feature engineering is the dominant predictive lever — more decisive than automated dimensionality reduction or model capacity.
+- Closing sentence: a single-sentence transition handing off to §2.5 Future Work. No enumerated future-work list in §2.4 (anti-pattern AP5).
+
+**C6 — Optional one-sentence external validation (≈ 30 words, budget-permitting)**
+- Pointer: `Wang2025MLOESCascaded` — R² ≈ 0.90–0.97 on LIR-based Te/ne prediction on a different plasma system sits in the same band as the pruned Ridge R² ≈ 0.92, reinforcing the generality of the domain-feature approach.
+- Decision: include only if the paragraph budget permits. Otherwise §2.4 stays citation-free.
+
+**Writing constraints**
+- No `\todo{}` placeholders; no bullet lists in the final prose (the outline uses bullets; the `main.tex` §2.4 must be flowing prose).
+- No figures, no tables.
+- Passive voice, no first-person, IEEE citation style, consistent with §1 / §2 / §2.3.
+- Every R² / Δ / CI / p-value is traceable to `results_flow.md` §7 and §2.3.
 
 ---
 
