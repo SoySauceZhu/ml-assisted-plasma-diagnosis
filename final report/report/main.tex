@@ -116,7 +116,7 @@
 \section*{Acknowledgements}
 \addcontentsline{toc}{section}{Acknowledgements}
 
-I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance throughout this project. I also thank the research group at Xi'an Jiaotong University (XJTU) for making the plasma discharge dataset publicly available.
+I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance and support in this project and throughout my final year. I also thank the research group at Xi'an Jiaotong University (XJTU) for making the plasma discharge dataset publicly available.
 
 % ---- Summary (Executive Summary, ≤200 words) ----------------
 \newpage
@@ -143,6 +143,7 @@ I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance throughout 
     \acro{ML}{Machine Learning}
     \acro{PCA}{Principal Component Analysis}
     \acro{LOOCV}{Leave-One-Out Cross-Validation}
+    \acro{CI}{Confidence Interval}
     \acro{Ridge}{Ridge Regression (L2-regularised linear regression)}
     \acro{PLS}{Partial Least Squares}
     \acro{SVR}{Support Vector Regression}
@@ -493,11 +494,7 @@ The broader implication returns to the gap identified in Section~\ref{sec:intro}
 
 \todo{Write personal reflection — approximately 200 words.}
 
-This project required bridging two disciplines: machine learning and plasma physics. At the outset, my background was in ML fundamentals, with limited exposure to spectroscopy or plasma chemistry. The most challenging phase was Phase~3, which required reading plasma diagnostics literature to understand which OES emission lines correspond to specific chemical species and why they are relevant to H\textsubscript{2}O\textsubscript{2} formation. This cross-disciplinary skill — translating physical knowledge into engineered features — proved to be the decisive factor in the project's success and is directly transferable to applied engineering roles in process monitoring and industrial AI.
 
-Technically, I developed proficiency in: building end-to-end ML pipelines in Python, Bayesian hyperparameter optimisation with Optuna, rigorous statistical validation (bootstrap, permutation testing), and scientific communication through the bench inspection poster. The iterative four-phase structure taught me to validate assumptions systematically before advancing to the next stage — a discipline that mirrors professional engineering practice.
-
-Comparing with my original skills audit, I entered the project with strong Python skills but limited knowledge of statistical model validation and plasma diagnostics. I leave it with a clearer understanding of how domain expertise shapes data science outcomes, and with greater confidence in independent research planning.
 
 % ============================================================
 % References
@@ -522,35 +519,27 @@ Comparing with my original skills audit, I entered the project with strong Pytho
 \section{Source Code}
 \label{app:code}
 
-The full Python source code for the ML pipeline (Phases 1--4) is available at: \todo{Add GitHub/repository URL or include code listing here.}
+The full Python source code for the ML pipeline (Phases 1--4) is available at: \url{https://github.com/SoySauceZhu/ml-assisted-plasma-diagnosis}
 
-Key modules:
-\begin{itemize}
-    \item \texttt{phase1/} — Baseline modelling with PCA features
-    \item \texttt{phase2/} — Optuna hyperparameter tuning
-    \item \texttt{phase3/} — Domain-knowledge feature engineering
-    \item \texttt{phase4/} — Interpretability, bootstrap, and permutation analysis
-\end{itemize}
+% \section{Dataset Description}
+% \label{app:dataset}
 
-\section{Dataset Description}
-\label{app:dataset}
-
-\todo{Describe dataset source, access method, preprocessing steps, and any data cleaning decisions.}
+% \todo{Describe dataset source, access method, preprocessing steps, and any data cleaning decisions.}
 
 \section{OES Feature Derivation}
 \label{app:oes_features}
 
 \todo{Table listing all 13 OES features: emission line / band / ratio, wavelength(s), corresponding plasma species, and literature reference justifying inclusion.}
 
-\section{Optuna Hyperparameter Search Results}
-\label{app:optuna}
+% \section{Optuna Hyperparameter Search Results}
+% \label{app:optuna}
 
-\todo{Include best hyperparameter sets found for RF, MLP, and CNN across all configurations. Include convergence plots if available.}
+% \todo{Include best hyperparameter sets found for RF, MLP, and CNN across all configurations. Include convergence plots if available.}
 
-\section{Full Statistical Test Outputs}
-\label{app:stats}
+% \section{Full Statistical Test Outputs}
+% \label{app:stats}
 
-\todo{Include bootstrap distribution plots, permutation test histogram, and full feature ablation R² table.}
+% \todo{Include bootstrap distribution plots, permutation test histogram, and full feature ablation R² table.}
 
 \end{appendices}
 
