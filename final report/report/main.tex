@@ -243,7 +243,7 @@ Thirteen physically motivated OES features were derived to replace the 11 PCA co
         I\textsubscript{O}         & Line  & 777     & Atomic O             & CO\textsubscript{2} dissociation; OH source \\
         I\textsubscript{H$\beta$}  & Line  & 486     & H (Balmer-$\beta$)   & H\textsubscript{2}O dissociation product \\
         I\textsubscript{H$\alpha$} & Line  & 656     & H (Balmer-$\alpha$)  & H\textsubscript{2}O dissociation product \\
-        I\textsubscript{N$_2$}     & Line  & 337     & N\textsubscript{2} (SPS)  & High-energy electron marker \\
+        I\textsubscript{N$_2$}     & Line  & 337     & N\textsubscript{2} (SPS)  & High-energy electron marker\cite{Paris2005N2Ratio} \\
         I\textsubscript{CO$_2^+$}  & Line  & 406     & CO\textsubscript{2}\textsuperscript{+} (FDB)  & CO\textsubscript{2} ionisation degree \\
         I\textsubscript{C$_2$}     & Line  & 516     & C\textsubscript{2} (Swan) & Deep dissociation indicator\cite{Gao2024NSCO2Discharge} \\
         \midrule
@@ -251,9 +251,9 @@ Thirteen physically motivated OES features were derived to replace the 11 PCA co
         $\int$CO$_2^+$             & Band  & 398--412 & CO\textsubscript{2}\textsuperscript{+} band & Reactant consumption marker \\
         $\int$CO/H$\beta$          & Band  & 460--500 & CO + H$\beta$       & Product formation region \\
         \midrule
-        OH/H$\alpha$               & Ratio & 309/656  & OH vs.\ H           & H abstraction pathway balance \\
-        H$\alpha$/H$\beta$         & Ratio & 656/486  & Balmer decrement    & Electron temperature diagnostic~\cite{Laux2003OESAir} \\
-        O/OH                       & Ratio & 777/309  & O vs.\ OH           & Oxidation pathway balance \\
+        OH/H$\alpha$               & Ratio & 309/656  & OH vs.\ H           & H abstraction pathway indicator \\
+        H$\alpha$/H$\beta$         & Ratio & 656/486  & Balmer decrement    & Electron temperature diagnostic~\cite{Laux2003OESAir}\cite{Griem1997PlasmaSpectroscopy} \\
+        O/OH                       & Ratio & 777/309  & O vs.\ OH           & Oxidation pathway indicator \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -519,17 +519,17 @@ The broader implication returns to the gap identified in Section~\ref{sec:intro}
 \section{Source Code}
 \label{app:code}
 
-The full Python source code for the ML pipeline (Phases 1--4) is available at: \url{https://github.com/SoySauceZhu/ml-assisted-plasma-diagnosis}
+The full Python source code for the ML pipeline (Phases 1--4) will be available after report submission at: \url{https://github.com/SoySauceZhu/ml-assisted-plasma-diagnosis}
 
 % \section{Dataset Description}
 % \label{app:dataset}
 
 % \todo{Describe dataset source, access method, preprocessing steps, and any data cleaning decisions.}
 
-\section{OES Feature Derivation}
-\label{app:oes_features}
+% \section{OES Feature Derivation}
+% \label{app:oes_features}
 
-\todo{Table listing all 13 OES features: emission line / band / ratio, wavelength(s), corresponding plasma species, and literature reference justifying inclusion.}
+% \todo{Table listing all 13 OES features: emission line / band / ratio, wavelength(s), corresponding plasma species, and literature reference justifying inclusion.}
 
 % \section{Optuna Hyperparameter Search Results}
 % \label{app:optuna}
