@@ -222,7 +222,7 @@ Seven regression models were selected to span three categories of inductive bias
 
 \subsection{Phase 2 --- Hyperparameter Optimisation}
 
-Non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Over 100 trials were conducted per model--configuration pair to identify optimal hyperparameters. Linear models (Ridge, PLS) were not tuned as their regularisation parameters have minimal impact at this scale. The purpose of this phase was strategic: by identifying the upper-bound performance ceiling with tuned models, it indicates that any subsequent improvement must originated from input feature representability itself, justifying the need for domain-knowledge feature engineering.
+Non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Over 100 trials were conducted per model--configuration pair to identify optimal hyperparameters. Linear models (Ridge, PLS) were not tuned as their regularisation parameters have minimal impact at this scale. The purpose of this phase was strategic: by identifying the upper-bound performance ceiling with tuned models, it indicates that any subsequent improvement must originated from \emph{input feature representability itself}, justifying the need for domain-knowledge feature engineering.
 
 \subsection{Phase 3 --- Domain-Knowledge Feature Engineering}
 
@@ -305,7 +305,16 @@ Under PCA, adding OES to the discharge parameters does not help --- it \emph{hur
 
 Hyperparameter optimisation via Optuna~\cite{optuna2019} then tested whether the same PCA features could be rescued by tuned ANN and tree-based model. The tuning delivered its largest gains on the worst models --- MLP Config~C improved from $-1.131$ to $0.369$ (a swing of $+1.50$) and CNN Config~C from $0.688$ to $0.775$, the best tuned OES-involved result --- yet neither exceeded the untuned Ridge baseline at Config~B~($0.904$). Tuned MLP Config~B reached $0.861$, approaching but not matching the linear baseline. This rejects the second hypothesis: tuning closes part of the gap, but the ceiling on OES-inclusive models is set by feature quality, not by model capacity. The remaining lever is the features engineering themselves.
 
-\todo{include image phase2/results/figures/phase1\_vs\_phase2\_comparison.png}
+\begin{figure}[H]
+    \centering
+    \IfFileExists{images/phase1_vs_phase2_comparison.png}{%
+        \includegraphics[width=0.9\textwidth]{images/phase1_vs_phase2_comparison.png}%
+    }{%
+        \fbox{\parbox{0.9\textwidth}{\centering\vspace{3em}\small[phase1\_vs\_phase2\_comparison.png not found]\vspace{3em}}}%
+    }
+    \caption{Phase~1 (baseline) versus Phase~2 (Optuna-tuned) $R^2$ for the non-linear models across the three input configurations. Tuning delivers its largest gains on the weakest baselines but none of the OES-inclusive configurations clears the untuned Ridge Config~B ceiling of $0.904$.}
+    \label{fig:phase1_vs_phase2}
+\end{figure}
 
 \begin{table}[H]
     \centering
@@ -492,7 +501,15 @@ The broader implication returns to the gap identified in Section~\ref{sec:intro}
 \section{Reflection}
 \label{sec:reflection}
 
-\todo{Write personal reflection — approximately 200 words.}
+
+Through out the project, I've experienced the essential process of doing research. From literature review, data processing, model building/testing/evaluation, to articulate and write academic style research paper.
+
+I spent a lot of time on looking for data and doing literature review, which intuitively disclose the probably challenges in 'scientific research' to me. I thus have a comprehensive understanding on my (possibly) future research career.
+
+Logic wise, the project is a chain of evidences, successfully trained my logic ability. Through experiment trials and result analysis phase by phase, I achieved relatively solid work by controlling variable.
+
+In technical aspect, this project shows me the significant to think with discretion when adopting seemingly fancy technologies like automated PCA dimensional reduction. In this project, long established traditional way of selecting features beats the automated way by a large margin, which is a good lesson for me to be more critical when choosing methods in future research.
+
 
 
 
