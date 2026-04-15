@@ -541,7 +541,36 @@ On the technical side, the project taught me the importance of exercising discre
 \section{Source Code}
 \label{app:code}
 
-The full Python source code for the ML pipeline (Phases 1--4) will be available after report submission at: \url{https://github.com/SoySauceZhu/ml-assisted-plasma-diagnosis}
+The full Python source code for the ML pipeline (Phases 1--4) will be available after report submission at: \url{https://github.com/SoySauceZhu/ml-assisted-plasma-diagnosis}. The software environment and library versions used to produce all results are listed in Appendix~\ref{app:software}.
+
+\section{Software and Tools}
+\label{app:software}
+
+All data processing, model training, and statistical analysis were performed in Python~3.9+. The core scientific stack comprised NumPy~\cite{harris2020array}, SciPy~\cite{2020SciPy-NMeth}, and pandas~\cite{mckinney-proc-scipy-2010}. Machine learning models were implemented with scikit-learn~\cite{scikit-learn}, XGBoost~\cite{chen2016xgboost}, and PyTorch~\cite{paszke2019pytorch}. Hyperparameter search used Optuna~\cite{optuna2019}, feature attribution used SHAP~\cite{lundberg2017unified}, and variance-inflation diagnostics used statsmodels~\cite{seabold2010statsmodels}. Figures were produced with matplotlib~\cite{Hunter2007} and seaborn~\cite{Waskom2021}. Table~\ref{tab:software} summarises the library versions pinned in \texttt{requirements.txt}.
+
+\begin{table}[h]
+\centering
+\caption{Software environment used for all Phase~1--4 analyses.}
+\label{tab:software}
+\begin{tabular}{lll}
+\toprule
+\textbf{Library} & \textbf{Version} & \textbf{Purpose} \\
+\midrule
+Python        & $\geq$3.9   & Interpreter \\
+NumPy         & $\geq$1.24  & Array computing \\
+SciPy         & (latest)    & Statistical tests (Spearman, permutation) \\
+pandas        & $\geq$2.0   & Tabular data handling \\
+scikit-learn  & $\geq$1.3   & Ridge, RF, PCA, LOOCV, pipelines \\
+XGBoost       & $\geq$2.0   & Gradient-boosted tree baseline \\
+PyTorch       & $\geq$2.0   & MLP and 1D-CNN implementations \\
+Optuna        & (latest)    & Bayesian hyperparameter search \\
+SHAP          & (latest)    & Feature attribution \\
+statsmodels   & (latest)    & Variance inflation factors \\
+matplotlib    & $\geq$3.7   & Figure generation \\
+seaborn       & $\geq$0.12  & Statistical plotting \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % \section{Dataset Description}
 % \label{app:dataset}
