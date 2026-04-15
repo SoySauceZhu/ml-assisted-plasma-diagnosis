@@ -1,0 +1,61 @@
+\newpage
+\section{Procedure / Methodology}
+\label{sec:method}
+
+The project aims to build experiment pipeline that predict  H\textsubscript{2}O\textsubscript{2} yield from OES and/or discharge parameters using ML models including linear regression, MLP, RF and CNN. Four phases of experiments are conducted to examine a hypothesis each: (1)~whether PCA-based OES features carry enough predictive information, (2)~whether hyperparameter tuning release PCA features' representability, (3)~whether domain-knowledge-based features outperform PCA dimensional reduction, and (4)~which features are most important. The following subsections introduce the dataset, evaluation method, and work in each phase.
+
+
+\subsection{Dataset and Evaluation Protocol}
+\label{sec:dataset}
+
+The dataset was acquired from Gao et al.~\cite{Gao2024NSCO2Discharge}, who generously open sourced the data collected from nanosecond pulsed CO\textsubscript{2} bubble discharge experiments. There are 20~samples in the set,each comprising a 701-point OES spectrum, four discharge parameters (CO\textsubscript{2} flow rate, pulse frequency, pulse width, and rise time), and the H\textsubscript{2}O\textsubscript{2} yield.
+
+Leave-One-Out Cross Validation (LOOCV) is adopted as the evaluating method for model performance. It is appropriate especially in small data scale. Each of the 20~samples is picked once as test set, while the remaining 19 are used for training. LOOCV maximises training data per fold, ensures minimal random dataset split variability, and prevents data leakage. Primary performance metrics are coefficient of determination ($R^2$) and root mean square error (RMSE). 
+
+
+\subsection{Input Configurations}
+
+OES features and discharge parameters are combined in three different ways to test representation ability of each input category (Table~\ref{tab:configs}). Config~B (discharge parameters only) is set as a baseline that any OES-inclusive configuration must outperform Config~B to justify the additional complexity. Comparison between different configuration prevents a common pitfall in ML studies that adopting seemingly sophisticated method only to achieve the same result as the simplest way.
+
+
+
+\subsection{Phase 1 --- Baseline Modelling}
+
+Seven regression models are test to introduce diversity, ensuring the variance in performance is due to feature engineering quality instead of model's intrinsic limitation. i.e. linear models (Ridge, PLS) suppose the fitting target is linearly related to input, kernel and ensemble methods (SVR, RF) captures non-linear interactions; and deep learning models (MLP, 1D~CNN) can learn hierarchical representations.Before sent to model, OES spectra with 701 wavelength points were reduced to 11 principal components via PCA ($\geq$95\% variance explained).
+
+
+
+\subsection{Phase 2 --- Hyperparameter Optimisation}
+
+非线性模型（随机森林、多层感知器、卷积神经网络）使用 Optuna [15] 进行调优，Optuna 是一种基于树状 Parzen 估计器的贝叶斯优化框架。每个模型-配置组合均进行了 100 多次试验，以确定最优超参数。线性模型（岭回归、偏最小二乘回归）未进行调优，因​​为它们的正则化参数在此规模下影响甚微。此阶段的目的是策略性的：通过确定调优模型的性能上限，表明任何后续改进都必须源于输入特征本身的可表示性，从而证明了领域知识特征工程的必要性。
+
+In phase~2, non-linear models (RF, MLP, CNN) were tuned using Optuna~\cite{optuna2019}, a Bayesian optimisation framework based on the Tree-structured Parzen Estimator. Hyperparameters are tuned for each models for over 100 times to find optimized configuration. Since regularization parameters have minimal impact on fitting, linear regression models are not tuned. The purpose of this phase was strategic: by identifying the upper-bound performance ceiling with tuned models, it indicates that any subsequent improvement must originated from \emph{input feature representability itself}, justifying the need for domain-knowledge feature engineering.
+
+
+
+
+\subsection{Phase 3 --- Domain-Knowledge Feature Engineering}
+
+这些分类方法相比主成分分析 (PCA) 具有显著优势。首先，光谱比值本质上具有漂移不变性：分子和分母受仪器测量的影响相同，从而消除了一个噪声源。其次，每个特征都对应于已知的等离子体种类或反应路径，具有物理意义。第三，从 701 个波长减少到 13 个特征显著降低了维度，从而降低了在这个 20 个样本数据集上的过拟合风险。
+
+These manually selected features brings higher interpretability than automated PCA. Fist, spectroscopic ratios 
+
+
+\subsection{Phase 4 --- Interpretability and Feature Reduction}
+
+为了获得一致的排序结果，我们使用了针对不同模型的特定方法来量化特征重要性：岭回归绝对标准化系数、PLS 投影变量重要性得分、RF 置换重要性以及 MLP SHAP 值。该综合排序最大限度地减少了模型特异性偏差，并突出了在不同模型中都起决定性作用的特征。
+
+统计验证包括两项互补的测试。Bootstrap 重采样（500 次迭代）提供了 R² 和 RMSE 的 95% 置信区间，在不假设分布的情况下量化了预测的不确定性。置换检验（2000 次标签随机化）评估了统计显著性：如果观察到的 R² 值超过所有零分布值，则映射关系是真实的，而非过拟合造成的假象。
+
+我们采用了两种特征降维策略。向后消除法迭代地移除最不重要的 OES 特征（保留所有四个流量参数），以在特征数量较少的情况下追踪模型的泛化能力。通过逐一移除整个OES特征类型（发射线、谱带积分或光谱比值），可以确定哪个特征类别贡献最大。这些分析共同识别出最具信息量的特征，有望提高模型的泛化能力。
+
+To achieve a consensus ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. The comprehensive ranking implicates features' significance across models without model-specific bias. 
+
+
+
+
+
+
+
+
+
