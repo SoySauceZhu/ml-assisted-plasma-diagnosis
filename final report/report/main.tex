@@ -193,18 +193,18 @@ Traditional spectroscopy has long recognised the value of line intensity ratios 
 \section{Procedure / Methodology}
 \label{sec:method}
 
-The experimental pipeline predicts H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters using models including linear regression models, MLP, RF and CNN. It comprises four phases, each testing a specific hypothesis: (1)~whether PCA-based OES features or discharge parameters carry predictive information, (2)~whether hyperparameter tuning compensates feature quality in advanced ML models, (3)~whether domain-knowledge features outperform automated feature extraction, and (4)~which features are essential and which are redundant. The following subsections detail the dataset, evaluation protocol, and each experimental phase.
+The experimental pipeline predicts H\textsubscript{2}O\textsubscript{2} yield from OES and/or discharge parameters using models including linear regression models, MLP, RF and CNN. Four phases of experiments examine a hypothesis each: (1)~whether PCA-based OES features or discharge parameters carry predictive information, (2)~whether hyperparameter tuning release representability of PCA features, (3)~whether domain-knowledge-based features outperform automated dimensional reduction, and (4)~identify the importance of each feature. The following subsections introduce the dataset, evaluation method, and each experimental phase.
 
 \subsection{Dataset and Evaluation Protocol}
 \label{sec:dataset}
 
-The dataset was provided by Gao et al.~\cite{Gao2024NSCO2Discharge} and originates from nanosecond pulsed CO\textsubscript{2} bubble discharge experiments conducted at Xi'an Jiaotong University. It contains 20~samples, each comprising a 701-point OES spectrum, four discharge parameters (CO\textsubscript{2} flow rate, pulse frequency, pulse width, and rise time), and a measured H\textsubscript{2}O\textsubscript{2} yield serving as the regression target.
+The dataset was provided by Gao et al.~\cite{Gao2024NSCO2Discharge} and acquired from nanosecond pulsed CO\textsubscript{2} bubble discharge experiments conducted at Xi'an Jiaotong University. It contains 20~samples, each comprising a 701-point OES spectrum, four discharge parameters (CO\textsubscript{2} flow rate, pulse frequency, pulse width, and rise time), and the H\textsubscript{2}O\textsubscript{2} yield --- the regression target.
 
-Model performance was evaluated using Leave-One-Out Cross-Validation (LOOCV), which is appropriate for this small dataset: each of the 20~samples is held out exactly once as the test set while the remaining 19 are used for training. LOOCV maximises training data per fold, eliminates random fold-split variability, and produces an unbiased performance estimate with no data leakage. The coefficient of determination ($R^2$) and root mean square error (RMSE) served as primary metrics.
+Model performance was evaluated using Leave-One-Out Cross-Validation (LOOCV), which is appropriate for this small dataset: each of the 20~samples is picked once as test set while the remaining 19 are used for training. LOOCV maximises training data per fold, eliminates random fold-split variability, and ensures no data leakage while estimating performance. Primary performance metrics are coefficient of determination ($R^2$) and root mean square error (RMSE). 
 
 \subsection{Input Configurations}
 
-Three input configurations were defined as a controlled-variable design to isolate the contribution of each data source (Table~\ref{tab:configs}). Config~B (discharge parameters only) serves as a strong baseline: any OES-inclusive configuration must outperform Config~B to justify the additional complexity of OES feature processing. This three-way comparison prevents a common pitfall in ML studies that claiming that a model ``works'' without testing whether simpler methods achieve the same result.
+OES features and discharge parameters are associated in three different ways to test representation ability of each input category (Table~\ref{tab:configs}). Config~B (discharge parameters only) serves as a baseline: any OES-inclusive configuration must outperform Config~B to justify the additional complexity of OES feature processing. Comparison between different configuration prevents a common pitfall in ML studies that adopting seemingly sophisticated method only to achieve the same result as simplest way.
 
 \begin{table}[H]
     \centering
@@ -223,7 +223,7 @@ Three input configurations were defined as a controlled-variable design to isola
 
 \subsection{Phase 1 --- Baseline Modelling}
 
-Seven regression models were selected to span three categories of inductive bias, ensuring that performance differences reflect feature quality rather than model-specific limitations: linear models (Ridge regression, Partial Least Squares) that test whether the feature--target relationship is approximately linear; kernel and ensemble methods (Support Vector Regression, Random Forest) that capture non-linear interactions; and deep learning models (Multi-Layer Perceptron, 1D~Convolutional Neural Network) that can learn hierarchical representations. OES spectra were reduced from 701 wavelengths to 11 principal components ($\geq$95\% variance explained) via PCA before training. XGBoost was also evaluated but produced anomalous identical results across all configurations, likely due to default hyperparameters being unsuitable for the small dataset; it was excluded from subsequent phases.
+Seven regression models were selected to introduce diversity, ensuring that performance differences reflect feature quality rather than model-specific limitations: linear models (Ridge, PLS) that test whether the fitting is approximately linear; kernel and ensemble methods (SVR, RF) that capture non-linear interactions; and deep learning models (MLP, 1D~CNN) that can learn hierarchical representations. OES spectra were reduced from 701 wavelengths to 11 principal components ($\geq$95\% variance explained) via PCA. XGBoost was also evaluated but produced anomalous identical results across all configurations, likely due to poorly chosen hyperparameters or dataset scale; it was excluded from subsequent phases.
 
 \subsection{Phase 2 --- Hyperparameter Optimisation}
 
@@ -238,7 +238,7 @@ Thirteen physically motivated OES features were derived to replace the 11 PCA co
 \begin{table}[H]
     \centering
     \small
-    \caption{Thirteen domain-knowledge OES features with corresponding plasma species and physical significance. \sout{A detailed derivation is provided in Appendix~\ref{app:oes_features}.}}
+    \caption{Thirteen domain-knowledge OES features with corresponding plasma species and physical significance. }
     \label{tab:oes_features}
     \begin{tabular}{llcll}
         \toprule
