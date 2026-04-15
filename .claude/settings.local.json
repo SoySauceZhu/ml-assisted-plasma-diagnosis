@@ -25,7 +25,10 @@
       "Read(//tmp/**)",
       "Bash(echo \"---EXITCODE $?---\")",
       "Bash(awk '/\\\\\\\\section\\\\{Conclusions\\\\}/,/\\\\\\\\section\\\\{Recommendations/' main.tex)",
-      "Read(//private/tmp/**)"
+      "Read(//private/tmp/**)",
+      "Bash(mkdir -p title introduction \"Experimental Methods\" Results conclusion appendix)",
+      "Bash(cp \"../../Final_Year_Project_Report_Template___University_of_Liverpool/IEEEtran.bst\" .)",
+      "Bash(cp \"../../Final_Year_Project_Report_Template___University_of_Liverpool/title/unnamed.png\" title/)"
     ]
   }
 }
