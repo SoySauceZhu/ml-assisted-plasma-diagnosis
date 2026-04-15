@@ -104,11 +104,11 @@
 
     \vfill
 
-    \IfFileExists{figures/uol_logo.png}{%
-        \includegraphics[width=0.25\textwidth]{figures/uol_logo.png}%
-    }{%
-        \fbox{\parbox{0.25\textwidth}{\centering\small[uol\_logo.png\\not found]}}%
-    }
+    % \IfFileExists{figures/uol_logo.png}{%
+    %     \includegraphics[width=0.25\textwidth]{figures/uol_logo.png}%
+    % }{%
+    %     \fbox{\parbox{0.25\textwidth}{\centering\small[uol\_logo.png\\not found]}}%
+    % }
 \end{titlepage}
 
 % ---- Acknowledgements (optional, not in word count) ---------
@@ -123,7 +123,12 @@ I would like to thank my supervisor, Prof.\ Xin Tu, for his guidance and support
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
 
-This project investigates whether domain-knowledge-driven feature engineering can enable accurate, interpretable prediction of hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) yield in a CO\textsubscript{2}--water plasma discharge from optical emission spectroscopy (OES) and discharge parameters. Using a public dataset of twenty samples from Xi'an Jiaotong University, four model families (Ridge, PLS, Random Forest, MLP, and CNN) were benchmarked under Leave-One-Out Cross-Validation across three input configurations: discharge-only, discharge with PCA-projected OES, and discharge with thirteen physically motivated OES features (single-wavelength lines, band integrals, and drift-invariant ratios). The study proceeded in four phases: baseline modelling, Optuna hyperparameter tuning, domain feature substitution, and feature pruning with bootstrap and permutation testing. PCA-based configurations failed to beat a simple discharge-only baseline, and tuning alone could not close the gap. Replacing PCA with the thirteen domain features produced a step-change across every model family, and backward elimination combined with category ablation converged on a seven-feature Ridge model (three spectroscopic ratios plus four discharge parameters) achieving $R^2 = 0.920$ with permutation significance $p < 0.0005$. The results show that, on small physically structured datasets, domain-informed features dominate model capacity as the decisive predictive lever.
+
+This project examine the approach that use machine learning (ML) to predict hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) yield from optical emission spectroscopy (OES) in nanosecond pulsed CO\textsubscript{2} bubble discharge. The primary challenge is the high-dimensionality of OES data (701 wavelengths) relative to the small dataset (20 samples), which leads to overfitting and poor generalisation.
+
+Four phases are conducted consecutively. First, baseline model are established among 7 different models based on PCA-selected features and discharge parameters, revealing that discharge parameters alone achieved R\textsuperscript{2} = 0.90 via Ridge regression while PCA of OES spectra failed to extract predictive information. Second, hyperparameter tuning via Optuna improved non-linear models but did not close the gap to the discharge-only baseline, confirming that the bottleneck was feature quality rather than model capacity. Then, 13 domain-knowledge-driven OES features were engineered as input of models, achieving substantial performance improvement across all models and closing the gap to baseline. Finally, feature importance analysis and backward elimination are conducted to identify features' contribution and improve model's generalisation ability. 
+
+The results demonstrate that domain-knowledge-driven feature engineering, combined with principled dimensionality reduction, outperforms complex nonlinear models in small-sample high-dimensional regression tasks.
 
 
 % ---- Tables of Contents / Figures / Tables / Abbreviations --
