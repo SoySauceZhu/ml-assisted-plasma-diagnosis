@@ -47,9 +47,36 @@ These manually selected features brings higher interpretability than automated P
 
 统计验证包括两项互补的测试。Bootstrap 重采样（500 次迭代）提供了 R² 和 RMSE 的 95% 置信区间，在不假设分布的情况下量化了预测的不确定性。置换检验（2000 次标签随机化）评估了统计显著性：如果观察到的 R² 值超过所有零分布值，则映射关系是真实的，而非过拟合造成的假象。
 
+
+
 我们采用了两种特征降维策略。向后消除法迭代地移除最不重要的 OES 特征（保留所有四个流量参数），以在特征数量较少的情况下追踪模型的泛化能力。通过逐一移除整个OES特征类型（发射线、谱带积分或光谱比值），可以确定哪个特征类别贡献最大。这些分析共同识别出最具信息量的特征，有望提高模型的泛化能力。
 
 To achieve a consensus ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. The comprehensive ranking implicates features' significance across models without model-specific bias. 
+
+
+\newpage
+\section{Findings / Results}
+\label{sec:results}
+
+本节按方法部分假设提出的顺序报告了四个阶段的结果。阶段 1 和 2 检验了 PCA 投影的 OES 特征和超参数调优是否足够；这两个假设均被否定。阶段 3 检验了基于物理原理的 OES 特征是否能够揭示预测信号，阶段 4 则确定了去除冗余后剩余的最小特征子集。主要发现是阶段 1-2 和阶段 3 之间的显著变化，以及阶段 4 中对精简模型的统计验证。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

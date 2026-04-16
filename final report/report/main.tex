@@ -273,9 +273,9 @@ These manually selected features brings higher interpretability than automated P
 
 \subsection{Phase 4 --- Interpretability and Feature Reduction}
 
-To achieve a consensus ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. The comprehensive ranking implicates features' significance across models without model-specific bias 
+To achieve a consensus ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. The comprehensive ranking implicates non-biased feature importance across models.
 
-Statistical validation comprised two complementary tests. Bootstrap resampling (500 iterations) provided 95\% confidence intervals for $R^2$ and RMSE, quantifying prediction uncertainty without distributional assumptions. Permutation test (2000 label shuffles) distinguished if the mapping relationship is genuine rather than overfitted by observing $R^2$ compared with null-distribution results.
+Statistical validation includes two complementary tests. Bootstrap resampling (500 iterations) identifies 95\% confidence intervals for $R^2$ and RMSE, quantifying prediction uncertainty without distributional assumptions. Permutation test (2000 label shuffles) distinguishes if the mapping relationship learnt is genuine rather than overfitted by comparing observed $R^2$ with null-distribution results.
 
 Feature reduction was performed with two strategies. Backward elimination iteratively removed the least important OES feature (retaining all four discharge parameters) to trace model generalization ability with less features. Category ablation removed entire OES feature types --- emission lines, band integrals, or spectroscopic ratios --- one at a time to identify which category contributes most. Together, these analyses identify most informative features and is expected to improve model generalization ability.
 
@@ -284,7 +284,7 @@ Feature reduction was performed with two strategies. Backward elimination iterat
 \section{Findings / Results}
 \label{sec:results}
 
-This section reports the outcome of the four phases in the order that the hypotheses in \S\ref{sec:method} were posed. Phases~1 and~2 test whether PCA-projected OES features and hyperparameter tuning are sufficient; both hypotheses are rejected. Phase~3 then tests whether physically motivated OES features unlock the predictive signal, and Phase~4 identifies the minimal subset of those features that remains when redundancy is removed. The headline finding is the step-change between Phases~1--2 and Phase~3, together with its statistical confirmation on the pruned model in Phase~4.
+This section reports the outcome of the four phases mentioned in \S\ref{sec:method}. Phases~1 and~2 test whether PCA-projected OES features and hyperparameter tuning are sufficient; both hypotheses are rejected. Phase~3 then tests whether physically motivated OES features reveal the predictive signal, and Phase~4 removes redundancy and identifies the minimal subset of features needed. The headline finding is the step-change between Phases~1--2 and Phase~3, together with its statistical confirmation on the pruned model in Phase~4.
 
 \subsection{Phase 1 \& 2 --- Baseline Ceiling and the PCA Dead End}
 
