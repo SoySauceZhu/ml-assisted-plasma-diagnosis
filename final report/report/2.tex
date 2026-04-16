@@ -66,7 +66,18 @@ The failure is structural rather than an artifact of improper dimensional reduct
 
 
 
+两种独立的降维策略均能解决冗余问题，且结果一致。以岭射电为例，分类消融（表6，上半部分）在保留放电参数的同时，去除了不同的OES特征类型：去除除三个光谱比值以外的所有特征后，R² = 0.906；去除除三个波段积分以外的所有特征后，R² = 0.905。两者均与仅包含放电特征的配置B（0.904）相匹配，并显著优于包含全部13个特征的配置（0.798）。相比之下，单波长强度表现最差（0.823），这与其对绝对强度漂移的敏感性相符。反向消除轨迹（表6，下半部分）也呈现出相同的趋势：R²值从包含13个OES特征时的0.798上升到仅包含一个OES特征（CO₂⁺波段积分）时的峰值0.918，然后在不包含任何OES特征时回落至0.904，这证实了OES除了放电参数外，还提供了更多信息，但这些信息仅通过少量非冗余通道获得。
 
+两种策略得到的峰值模型虽然接近但不完全相同：反向消除倾向于包含5个特征的模型（1个OES波段+4个放电特征，R²=0.918），而类别消融则保留了所有三个比值（3个比值+4个放电特征，共7个特征）。在对包含7个特征的模型集重新拟合岭回归模型后，R²值从0.906（类别消融结果）提升至0.920。对该重新拟合的模型进行2000次置换标签重排检验，未发现R²值与观测值相当的零假设，排除了过拟合的可能性。推荐使用包含7个特征的模型，因为它保留了所有三种比值类型——OH/Hα、O/OH和Hα/Hβ——这些比值类型本身具有漂移不变性且具有物理意义，而反向消除法得到的更简单的模型则依赖于单个波段积分。
+
+
+Two independent reduction strategies help to resolve redundancy with comparable result. Taking Ridge as an example, the category ablation (Table~\ref{tab:ablation}, upper block) removes different OES feature types while keeping discharge parameters: removing everything except the three spectroscopic ratios yields R\textsuperscript{2}~$=0.906$, and removing everything except the three band integrals yields R\textsuperscript{2}~$=0.905$. Both approximate to discharge-only Config~B ($0.904$) and substantially exceed the full 13-feature set ($0.798$). In contrast, single-wavelength intensity shows the worst performance ($0.823$), consistent with the assumed sensitivity on drift. Same tendency can also been witnessed in backward elimination (Table~\ref{tab:ablation}, lower block): R\textsuperscript{2} rises from $0.798$ at 13 OES features to a peak of $0.918$ at one OES feature (CO\textsubscript{2}\textsuperscript{+} band integral only), then drops back to $0.904$ when no OES features is included, proving that non-redundant OES features actually add information to the mapping relationship.
+
+Top models for both reduction strategies are close not identical. Backward elimination identifies the tops as a 5-feature model (1 OES band + 4 discharge, R\textsuperscript{2}~$=0.918$) while category ablation favours 3~ratios~+ 4~discharge parameters. After refitting Ridge model on the 7-feature set, R\textsuperscript{2} is raised from $0.906$ (category ablation result) to $\mathbf{0.920}$, and a 2000-permutation label-shuffle test on that refit model returned no null R\textsuperscript{2} as large as the observed value, excludes the possibility of overfitting. Preserving all three ratio categories (OH/H\textsubscript{$\alpha$}, O/OH, and H\textsubscript{$\alpha$}/H\textsubscript{$\beta$}), the 7-features model input is overall recommended for sack of robustness and interpretability.
+
+图 7 展示了在第一阶段至第四阶段探索的所有模型-配置组合的总体排名中，经过修剪的 7 特征岭模型的位置。该修剪模型位居榜首，领先于经过调优的神经网络，并且远超所有基于 PCA 的配置。至关重要的是，必须结合自举重叠情况来解读此排名：排名前几的模型之间的绝对顺序在噪声范围内，但顶级模型类别（基于少量物理特征的简单线性回归器）与在第一阶段至第二阶段占据主导地位的基于 PCA 的配置之间存在显著差异。
+
+Figure~\ref{fig:model_ranking} lists out comprehensive ranking of all model--input config pairs explored in Phases~1--4. The pruned model performs as the top, ahead of tuned neural networks and significantly exceeds all PCA-based configurations. Essentially, the ranking should be explain with bootstrap result. The absolute ordering among the top handful of models is within noise, but the \emph{class} of top models --- linear regressors with few physically motivated features --- is obviously separable from PCA configurations in Phase~1--2. 
 
 
 
