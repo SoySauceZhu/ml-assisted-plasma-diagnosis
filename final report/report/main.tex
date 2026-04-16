@@ -273,11 +273,11 @@ These manually selected features brings higher interpretability than automated P
 
 \subsection{Phase 4 --- Interpretability and Feature Reduction}
 
-To achieve a consensus ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. The comprehensive ranking implicates non-biased feature importance across models.
+To achieve a consensus, non-biased ranking on feature importance, model-specific methods are used to quantify: Ridge absolute standardised coefficients, PLS Variable Importance in Projection scores, RF permutation importance, and MLP SHAP values. 
 
 Statistical validation includes two complementary tests. Bootstrap resampling (500 iterations) identifies 95\% confidence intervals for $R^2$ and RMSE, quantifying prediction uncertainty without distributional assumptions. Permutation test (2000 label shuffles) distinguishes if the mapping relationship learnt is genuine rather than overfitted by comparing observed $R^2$ with null-distribution results.
 
-Feature reduction was performed with two strategies. Backward elimination iteratively removed the least important OES feature (retaining all four discharge parameters) to trace model generalization ability with less features. Category ablation removed entire OES feature types --- emission lines, band integrals, or spectroscopic ratios --- one at a time to identify which category contributes most. Together, these analyses identify most informative features and is expected to improve model generalization ability.
+Feature reduction was performed with two strategies. Backward elimination iteratively removed the least important OES feature iteratively to trace model generalization ability with less features. Category ablation removed entire OES feature types --- emission lines, band integrals, or spectroscopic ratios --- one at a time to identify which category contributes most. Together, these analyses identify most informative features and is expected to improve model generalization ability.
 
 % ============================================================
 \newpage
@@ -488,31 +488,27 @@ In summary, the evidences are chained mutually. Phases~1--2 reject the hypothese
 \section{Conclusions}
 \label{sec:conclusions}
 
-The three objectives posed in Section~\ref{sec:intro} have each been resolved. The first, to build machine-learning models predicting H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters, is met by a pruned seven-feature Ridge regression attaining $R^2 = 0.920$ and $\mathrm{RMSE} = 0.066$ under LOOCV. The second, to test whether domain-knowledge features outperform automated dimensionality reduction, is met by the Phase~1 to Phase~3 step-change on Config~C, in which Ridge rises from $R^2 = -0.175$ to $0.798$ and MLP from $-1.131$ to $0.815$. The third, to identify a minimal interpretable feature set, is met by the convergence of backward elimination and category ablation on a model of at most seven features.
+The three objectives posed in Section~\ref{sec:intro} have each been resolved. The first, to build machine-learning models predicting H\textsubscript{2}O\textsubscript{2} yield from OES and discharge parameters, is met by a pruned seven-feature Ridge regression attaining $R^2 = 0.920$ and $\mathrm{RMSE} = 0.066$ under LOOCV. The second, to test whether domain-knowledge features outperform automated dimensionality reduction, is met by the improvement from Phase~1 to Phase~3 on Config~C. The third, to identify a minimal interpretable feature set, is met by the convergence of backward elimination and category ablation.
 
-The decisive lever was domain-knowledge feature engineering, instead of model capacity or hyperparameter tuning. Phase~1 rejected the hypothesis that PCA-projected OES features carry sufficient signal: performance of Ridge regression drops from $R^2 = 0.904$ (Config~B) down to $-0.175$ (Config~C) after including PCA components on base of discharge parameters. Phase~2 then rejected the hypothesis that tuning could rescue those features' representability, with the best tuned OES-included result (CNN Config~C) climbing only from $0.688$ to $0.775$, still below Ridge Config~B. Only when the PCA components were replaced with thirteen physically motivated OES features did the Config~B / Config~C gap close across every model class.
+The decisive lever was domain-knowledge feature engineering, instead of model capacity or hyperparameter tuning. Phase~1 rejected the hypothesis that PCA-projected OES features carry sufficient signal. Phase~2 then rejected the hypothesis that tuning could rescue those features' representability, with the best tuned OES-included result still below Ridge Config~B. Only when the PCA components were replaced with thirteen physically motivated OES features did the Config~B / Config~C gap close across every model class.
 
-The reproducible artefact recommended by this research is a Ridge regression on three drift-invariant spectroscopic ratios (OH/H\textsubscript{$\alpha$}, O/OH, H\textsubscript{$\alpha$}/H\textsubscript{$\beta$}) together with the four discharge parameters. On this seven-feature set the observed $R^2 = 0.920$ is statistically significant under a permutation test of 2000 label shuffles, in which no null realisation matched or exceeded the observed value ($p < 0.0005$). The preference for Ridge over a non-linear alternative is dictated not by a capability gap but by complexity and deployment cost at small scale data $n=20$.
+The reproducible artefact recommended by this research is a Ridge regression on three drift-invariant spectroscopic ratios (OH/H\textsubscript{$\alpha$}, O/OH, H\textsubscript{$\alpha$}/H\textsubscript{$\beta$}) together with the four discharge parameters. On this seven-feature set the observed $R^2 = 0.920$ is statistically significant under a permutation test of 2000 label shuffles. The preference for Ridge over a non-linear model is justified by complexity and deployment cost at small scale data $n=20$.
 
 However, several limitations must be stated plainly. At the thirteen-feature stage, the bootstrap intervals of Ridge Config~B $[0.800, 0.955]$ and Ridge Config~C $[0.574, 0.910]$ overlap substantially, so a claim that domain features are statistically superior to PCA is \emph{not} defensible before pruning; the permutation significance attaches only to the pruned seven-feature model. The sample size of twenty is the root cause of these wide intervals and of the project's inability to discriminate between linear and non-linear model families. All data originate from a single reactor and a single wavelength calibration, so cross-reactor generalisation remains untested, and the thirteen OES features themselves were derived for CO\textsubscript{2}-water bubble chemistry and will need to be re-derived for other plasma systems.
 
-The broader implication returns to the gap identified in Section~\ref{sec:intro}: modern OES-based machine-learning pipelines default to PCA or PLS and overlook the diagnostic domain knowledge that traditional spectroscopy has encoded for decades, i.e. line ratios, band integrals, drift-invariant markers. On small, physically structured datasets those overlooked knowledge proves to be the dominant predictive lever, and the pruned Ridge $R^2 \approx 0.92$ sits within the $R^2 \approx 0.90\text{--}0.97$ band reported by Wang et al.~\cite{Wang2025MLOESCascaded} for line-intensity-ratio models on a different plasma-diagnostic task. The questions of cross-reactor generalisation and live deployment that these limitations raise are taken up in Section~\ref{sec:future}.
+The broader implication converges to the gap identified in Section~\ref{sec:intro}: modern OES-based machine-learning pipelines with automated preprocessing usually overlook the human-driven domain-knowledge like the traditional spectroscopy indicator. On small, physically structured datasets those overlooked knowledge proves to be the dominant, and the pruned Ridge $R^2 \approx 0.92$ sits within the $R^2 \approx 0.90\text{--}0.97$ band reported by Wang et al.~\cite{Wang2025MLOESCascaded} for line-intensity-ratio models on a different plasma-diagnostic task. 
 
 % ============================================================
 \newpage
 \section{Recommendations / Future Work}
 \label{sec:future}
 
-\begin{enumerate}
-    \item \textbf{Generalisation testing:} Apply the domain-knowledge feature engineering framework to OES datasets from different plasma reactor types (e.g., DBD, microwave) to assess transferability of the selected emission lines and ratios.
-
-    \item \textbf{Real-time deployment:} Integrate the 7-feature Ridge model with live OES hardware to enable closed-loop discharge control. Evaluate prediction latency, calibration stability, and robustness to instrument drift.
-
-    \item \textbf{Extended datasets:} Collect additional samples across wider operating parameter ranges to investigate whether non-linear models (MLP, RF) offer advantages over linear models at larger data scales.
-
-    \item \textbf{Physics-informed modelling:} For multi-product plasma systems, incorporate conservation constraints (e.g., mass balance) into multi-output regression models to improve physical consistency.
-
-    \item \textbf{Transfer learning:} Leverage models trained on this dataset to initialise predictors for related plasma reactions (ozone generation, N\textsubscript{2}O conversion), reducing the data requirements for new systems.
+\begin{enumerate}[noitemsep, topsep=0pt]
+    \item \textbf{Generalisation testing:} Apply the feature engineering framework to OES data from other reactor types (DBD, microwave) to test transferability of selected emission lines and ratios.
+    \item \textbf{Real-time deployment:} Integrate the 7-feature Ridge model with live OES hardware for closed-loop control; assess latency, calibration stability, and drift robustness.
+    \item \textbf{Extended datasets:} Collect samples over wider operating ranges to test whether non-linear models (MLP, RF) outperform linear ones at scale.
+    \item \textbf{Physics-informed modelling:} Incorporate conservation constraints (e.g., mass balance) into multi-output regression for multi-product systems to enforce physical consistency.
+    \item \textbf{Transfer learning:} Use models trained here to initialise predictors for related plasma reactions (ozone, N\textsubscript{2}O conversion), reducing data needs for new systems.
 \end{enumerate}
 
 % ============================================================
