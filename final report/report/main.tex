@@ -169,7 +169,7 @@ The results demonstrate that domain-knowledge-driven feature engineering, combin
 
 Plasma-based green chemistry has emerged as a promising approach for converting greenhouse gases into valuable chemicals. Nanosecond pulsed CO\textsubscript{2} bubble discharge enables efficient synthesis of hydrogen and hydrogen peroxide (H\textsubscript{2}O\textsubscript{2}) from CO\textsubscript{2} and water~\cite{Gao2024NSCO2Discharge, Shao2018PulsedDischarges}. As the approach advances toward industrial deployment, real-time monitoring is increasingly demanded for close-loop production control. However, conventional H\textsubscript{2}O\textsubscript{2} measurement relies on titration, an intrusive and time-consuming process.
 
-Optical Emission Spectroscopy (OES) provides a non-intrusive observation method into the plasma by recording light emitted by excited species~\cite{Laux2003OESAir}. Traditional OES analysis employs spectroscopic techniques such as Boltzmann plots or line-ratio methods, which requires establishing physical models and expert interpretation~\cite{Laux2003OESAir, Srikar2024Accelerated}. Machine learning (ML) offers a data-driven alternative, enabling OES-based diagnostics for real-time applications~\cite{Gidon2019MLCAP}. However, high-dimensional complexity OES spectra is a challenge for ML models, for example, the OES used in this study comprises 701 wavelength points, creating a "dimensionality disaster", particularly on small datasets.
+Optical Emission Spectroscopy (OES) provides a non-intrusive observation method into the plasma by recording light emitted by excited species~\cite{Laux2003OESAir}. Traditional OES analysis employs spectroscopic techniques such as Boltzmann plots or line-ratio methods, which requires establishing physical models and expert interpretation~\cite{Laux2003OESAir, Srikar2024Accelerated}. Machine learning (ML) offers a data-driven alternative, enabling OES-based diagnostics for real-time applications~\cite{Gidon2019MLCAP}. However, high-dimensional OES spectra is a challenge for ML models, for example, the OES used in this study comprises 701 wavelength points, creating a "dimensionality disaster", particularly on small datasets.
 
 \subsection{Objectives}
 
@@ -479,11 +479,11 @@ Figure~\ref{tab:model_ranking} lists out comprehensive ranking of all model--inp
         \toprule
         \textbf{Rank} & \textbf{Model} & \textbf{Config} & \textbf{R\textsuperscript{2}} & \textbf{Features} & \textbf{Note} \\
         \midrule
-        1 & Ridge & C (3 OES ratios)  & 0.920 &  7 & Category ablation \\
+        1 & Ridge & C (3 OES ratios)  & 0.920 &  7 & Category ablation\ peak\\
         2 & Ridge & C (1 OES ratio)   & 0.918 &  5 & Backward elim.\ peak \\
         3 & Ridge & B                 & 0.904 &  4 & Phase 1 baseline \\
         4 & PLS   & B                 & 0.898 &  4 & Phase 1 baseline \\
-        5 & Ridge & C (4 OES)         & 0.899 &  8 & Backward elim.\ $n{=}4$ peak \\
+        5 & Ridge & C (4 OES)         & 0.899 &  8 & Backward elim.\ $n{=}4$\\
         6 & MLP   & B                 & 0.857 &  4 & Phase 2 tuned \\
         7 & MLP   & C                 & 0.815 & 17 & Phase 3 tuned \\
         8 & Ridge & C (full, Phase 3) & 0.798 & 17 & Phase 3 starting point \\

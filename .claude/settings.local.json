@@ -31,7 +31,8 @@
       "Bash(cp \"../../Final_Year_Project_Report_Template___University_of_Liverpool/title/unnamed.png\" title/)",
       "Bash(pdftotext -layout \"/Users/mingjie.zhu22/SynologyDrive/0.2025_Year4/FYP/code2.0/final report/Final report Guidance 2026.pdf\" -)",
       "Bash(grep *)",
-      "Bash(texcount -inc -sub=section main.tex)"
+      "Bash(texcount -inc -sub=section main.tex)",
+      "WebSearch"
     ]
   }
 }
