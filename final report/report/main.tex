@@ -467,19 +467,30 @@ Top models for both reduction strategies are close but not identical. Backward e
 \end{table}
 
 
-Figure~\ref{fig:model_ranking} lists out comprehensive ranking of all model--input config pairs explored in Phases~1--4. The pruned model performs as the top, ahead of tuned neural networks and significantly exceeds all PCA-based configurations. Essentially, the ranking should be explain with bootstrap result. The absolute ordering among the top handful of models is within noise, but the \emph{class} of top models --- linear regressors with few physically motivated features --- is obviously separable from PCA configurations in Phase~1--2. 
+Figure~\ref{tab:model_ranking} lists out comprehensive ranking of all model--input config pairs explored in Phases~1--4. The pruned model performs as the top, ahead of tuned neural networks and significantly exceeds all PCA-based configurations. Essentially, the ranking should be explain with bootstrap result. The absolute ordering among the top handful of models is within noise, but the \emph{class} of top models --- linear regressors with few physically motivated features --- is obviously separable from PCA configurations in Phase~1--2. 
 
 
-\begin{figure}[H]
+\begin{table}[H]
     \centering
-    \IfFileExists{images/rank_on_model_config.png}{%
-        \includegraphics[width=0.92\textwidth]{images/rank_on_model_config.png}%
-    }{%
-        \fbox{\parbox{0.92\textwidth}{\centering\vspace{3em}\small[rank\_on\_model\_config.png not found]\vspace{3em}}}%
-    }
-    \caption{Overall ranking of model--configuration combinations across Phases~1--4. The pruned 7-feature Ridge (3 OES ratios + 4 discharge) sits at the top of the ranking; PCA-based configurations occupy the bottom of the distribution.}
-    \label{fig:model_ranking}
-\end{figure}
+    \small
+    \caption{Overall ranking of model--configuration combinations across Phases~1--4. The pruned 7-feature Ridge sits at the top; PCA-based configurations occupy the bottom.}
+    \label{tab:model_ranking}
+    \begin{tabular}{clllcl}
+        \toprule
+        \textbf{Rank} & \textbf{Model} & \textbf{Config} & \textbf{R\textsuperscript{2}} & \textbf{Features} & \textbf{Note} \\
+        \midrule
+        1 & Ridge & C (3 OES ratios)  & 0.920 &  7 & Category ablation \\
+        2 & Ridge & C (1 OES ratio)   & 0.918 &  5 & Backward elim.\ peak \\
+        3 & Ridge & B                 & 0.904 &  4 & Phase 1 baseline \\
+        4 & PLS   & B                 & 0.898 &  4 & Phase 1 baseline \\
+        5 & Ridge & C (4 OES)         & 0.899 &  8 & Backward elim.\ $n{=}4$ peak \\
+        6 & MLP   & B                 & 0.857 &  4 & Phase 2 tuned \\
+        7 & MLP   & C                 & 0.815 & 17 & Phase 3 tuned \\
+        8 & Ridge & C (full, Phase 3) & 0.798 & 17 & Phase 3 starting point \\
+        9 & CNN   & C                 & 0.770 & 705 & Phase 2 tuned \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 In summary, the evidence is chained mutually. Phases~1--2 reject the hypotheses that PCA-projected OES features and hyperparameter tuning alone can predict H\textsubscript{2}O\textsubscript{2} yield. Phase~3 demonstrates that physically motivated OES features produce a step-change across every model class, closing the Config~B / Config~C gap. Phase~4 then shows that most of the 13 domain features are redundant, and that a 7-feature Ridge model built on three drift-invariant spectroscopic ratios and the four discharge parameters achieves R\textsuperscript{2}~$=0.920$ with statistically significant permutation support. Though the gap between ridge and neural network is negligible --- the bootstrap intervals overlap ---, by Occam's razor, Ridge model in this project ($n=20$) is more preferable dut to complexity and interpretability advantages.
 
